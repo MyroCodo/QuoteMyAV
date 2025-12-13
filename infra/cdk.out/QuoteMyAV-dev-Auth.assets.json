@@ -1,0 +1,21 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "d29b62b41427213b52a505b8e5e39b846f0e10f8eacb29e1e116c7dc21e96dd4": {
+      "displayName": "QuoteMyAV-dev-Auth Template",
+      "source": {
+        "path": "QuoteMyAV-dev-Auth.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "332305705731-us-east-1-4590ab13": {
+          "bucketName": "cdk-hnb659fds-assets-332305705731-us-east-1",
+          "objectKey": "d29b62b41427213b52a505b8e5e39b846f0e10f8eacb29e1e116c7dc21e96dd4.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::332305705731:role/cdk-hnb659fds-file-publishing-role-332305705731-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

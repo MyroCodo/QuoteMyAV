@@ -176,6 +176,13 @@ export const Errors = {
       500
     ),
 
+  serverError: (message?: string) =>
+    new ApiError(
+      'SERVER_ERROR',
+      message || 'Server error occurred',
+      500
+    ),
+
   database: (operation: string) =>
     new ApiError(
       'DATABASE_ERROR',

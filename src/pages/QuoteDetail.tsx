@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button, Card, Badge } from '../components/ui';
-import { VersionHistoryPanel, VersionCompareModal } from '../components/quote';
+import { VersionHistoryPanel, VersionCompareModal, SendQuoteModal } from '../components/quote';
 import { useQuoteStore } from '../stores/quoteStore';
 import { useVersionStore } from '../stores/versionStore';
 import type { Quote, QuoteVersion, QuoteVersionDiff } from '../types';
@@ -103,6 +103,8 @@ export function QuoteDetail() {
 
   const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [compareDiff, setCompareDiff] = useState<QuoteVersionDiff | null>(null);
+  const [isSendModalOpen, setIsSendModalOpen] = useState(false);
+  const [sendSuccess, setSendSuccess] = useState<{ email: string; sentAt: string } | null>(null);
 
   const quote = quotes.find((q) => q.id === id);
 
@@ -224,11 +226,16 @@ export function QuoteDetail() {
               </svg>
               PDF
             </Button>
-            <Button variant="secondary" size="sm">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsSendModalOpen(true)}
+              disabled={quote.status === 'sent' || quote.status === 'accepted' || quote.status === 'rejected'}
+            >
               <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
-              Email
+              {quote.status === 'sent' ? 'Sent' : 'Send'}
             </Button>
           </div>
         </div>
@@ -410,11 +417,16 @@ export function QuoteDetail() {
             </svg>
             Export JSON
           </Button>
-          <Button variant="secondary" size="lg">
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={() => setIsSendModalOpen(true)}
+            disabled={quote.status === 'sent' || quote.status === 'accepted' || quote.status === 'rejected'}
+          >
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-            Email Client
+            {quote.status === 'sent' ? 'Already Sent' : 'Send to Client'}
           </Button>
           <Button size="lg" onClick={() => handleEdit(navigate, quote.id)}>
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -446,6 +458,47 @@ export function QuoteDetail() {
         }}
         diff={compareDiff}
       />
+
+      {/* Send Quote Modal */}
+      <SendQuoteModal
+        isOpen={isSendModalOpen}
+        quote={quote}
+        onClose={() => setIsSendModalOpen(false)}
+        onSuccess={(result) => {
+          setSendSuccess({ email: result.recipientEmail, sentAt: result.sentAt });
+          // Clear success after 5 seconds
+          setTimeout(() => setSendSuccess(null), 5000);
+        }}
+      />
+
+      {/* Send Success Notification */}
+      {sendSuccess && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
+          <div className="bg-emerald-500/10 backdrop-blur-xl border border-emerald-500/30 rounded-xl p-4 shadow-2xl">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-white font-medium">Quote Sent Successfully!</p>
+                <p className="text-sm text-slate-300">
+                  Sent to {sendSuccess.email}
+                </p>
+              </div>
+              <button
+                onClick={() => setSendSuccess(null)}
+                className="text-slate-400 hover:text-white ml-4"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

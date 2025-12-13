@@ -22,7 +22,21 @@
       "WebFetch(domain:fonts.google.com)",
       "WebSearch",
       "Bash(start \"\" \"D:\\Projects\\QuoteMyAV\\docs\\design\\font-comparison.html\")",
-      "Bash(npx vite build:*)"
+      "Bash(npx vite build:*)",
+      "Bash(aws secretsmanager create-secret:*)",
+      "Bash(aws acm request-certificate:*)",
+      "Bash(aws acm describe-certificate:*)",
+      "Bash(aws route53 change-resource-record-sets:*)",
+      "Bash(aws sts get-caller-identity:*)",
+      "Bash(aws configure get:*)",
+      "Bash(aws s3:*)",
+      "Bash(cdk ls:*)",
+      "Bash(git config:*)",
+      "Bash(aws secretsmanager list-secrets:*)",
+      "Bash(aws secretsmanager get-secret-value:*)",
+      "Bash(aws secretsmanager update-secret:*)",
+      "Bash(npm run build:lambda:*)",
+      "Bash(cdk synth:*)"
     ]
   }
 }

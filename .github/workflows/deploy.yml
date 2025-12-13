@@ -1,0 +1,176 @@
+name: Deploy QuoteMyAV
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+  NODE_VERSION: '20'
+
+jobs:
+  # Run tests and linting
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Build Lambda
+        run: npm run build:lambda
+
+  # Deploy to staging on PRs
+  deploy-staging:
+    needs: test
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    environment: staging
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Build Lambda
+        run: npm run build:lambda
+
+      - name: Install CDK dependencies
+        run: cd infra && npm ci
+
+      - name: Deploy CDK stacks (staging)
+        run: cd infra && npx cdk deploy --all --require-approval never -c environment=dev
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID }}
+          CDK_DEFAULT_REGION: ${{ env.AWS_REGION }}
+
+      - name: Get S3 bucket name
+        id: get-bucket
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks --stack-name QuoteMyAV-dev-Frontend --query "Stacks[0].Outputs[?ExportName=='QuoteMyAV-dev-Frontend-BucketName'].OutputValue" --output text)
+          echo "bucket=$BUCKET" >> $GITHUB_OUTPUT
+
+      - name: Sync frontend to S3
+        run: aws s3 sync dist/ s3://${{ steps.get-bucket.outputs.bucket }} --delete
+
+      - name: Get CloudFront distribution ID
+        id: get-distribution
+        run: |
+          DIST_ID=$(aws cloudformation describe-stacks --stack-name QuoteMyAV-dev-Frontend --query "Stacks[0].Outputs[?ExportName=='QuoteMyAV-dev-Frontend-DistributionId'].OutputValue" --output text)
+          echo "distribution_id=$DIST_ID" >> $GITHUB_OUTPUT
+
+      - name: Invalidate CloudFront cache
+        run: aws cloudfront create-invalidation --distribution-id ${{ steps.get-distribution.outputs.distribution_id }} --paths "/*"
+
+  # Deploy to production on main branch
+  deploy-production:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build
+        env:
+          VITE_APP_URL: https://quotemyav.com
+          VITE_API_URL: https://quotemyav.com/v1
+
+      - name: Build Lambda
+        run: npm run build:lambda
+
+      - name: Install CDK dependencies
+        run: cd infra && npm ci
+
+      - name: Deploy CDK stacks (production)
+        run: cd infra && npx cdk deploy --all --require-approval never -c environment=prod
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID }}
+          CDK_DEFAULT_REGION: ${{ env.AWS_REGION }}
+
+      - name: Get S3 bucket name
+        id: get-bucket
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks --stack-name QuoteMyAV-prod-Frontend --query "Stacks[0].Outputs[?ExportName=='QuoteMyAV-prod-Frontend-BucketName'].OutputValue" --output text)
+          echo "bucket=$BUCKET" >> $GITHUB_OUTPUT
+
+      - name: Sync frontend to S3
+        run: aws s3 sync dist/ s3://${{ steps.get-bucket.outputs.bucket }} --delete
+
+      - name: Get CloudFront distribution ID
+        id: get-distribution
+        run: |
+          DIST_ID=$(aws cloudformation describe-stacks --stack-name QuoteMyAV-prod-Frontend --query "Stacks[0].Outputs[?ExportName=='QuoteMyAV-prod-Frontend-DistributionId'].OutputValue" --output text)
+          echo "distribution_id=$DIST_ID" >> $GITHUB_OUTPUT
+
+      - name: Invalidate CloudFront cache
+        run: aws cloudfront create-invalidation --distribution-id ${{ steps.get-distribution.outputs.distribution_id }} --paths "/*"
+
+      - name: Deployment summary
+        run: |
+          echo "## Deployment Complete! 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment:** Production" >> $GITHUB_STEP_SUMMARY
+          echo "- **Frontend:** https://quotemyav.com" >> $GITHUB_STEP_SUMMARY
+          echo "- **API:** https://quotemyav.com/v1/health" >> $GITHUB_STEP_SUMMARY
+          echo "- **CloudFront:** ${{ steps.get-distribution.outputs.distribution_id }}" >> $GITHUB_STEP_SUMMARY

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { User } from '../types';
-import { authService, isSupabaseConfigured } from '../services/supabase';
+import { authService } from '../services/auth';
 
 interface AuthState {
   user: User | null;
@@ -15,20 +15,6 @@ interface AuthState {
   signOut: () => Promise<void>;
   clearError: () => void;
 }
-
-// Helper to convert Supabase user to our User type
-const mapUser = (supabaseUser: { id: string; email?: string; user_metadata?: Record<string, unknown> } | null): User | null => {
-  if (!supabaseUser) return null;
-
-  return {
-    id: supabaseUser.id,
-    email: supabaseUser.email || '',
-    fullName: (supabaseUser.user_metadata?.full_name as string) || '',
-    company: supabaseUser.user_metadata?.company as string | undefined,
-    tier: 'free', // Default tier, would come from database in production
-    createdAt: new Date().toISOString(),
-  };
-};
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
@@ -48,10 +34,9 @@ export const useAuthStore = create<AuthState>((set) => ({
         return;
       }
 
-      const mappedUser = mapUser(user);
       set({
-        user: mappedUser,
-        isAuthenticated: !!mappedUser,
+        user,
+        isAuthenticated: !!user,
         isLoading: false,
       });
     } catch (err) {
@@ -71,16 +56,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         return { success: false, error: error.message };
       }
 
-      const mappedUser = mapUser(user);
-
-      // Save demo session if not using real Supabase
-      if (!isSupabaseConfigured && user) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        authService.saveDemoSession(user as any);
-      }
-
       set({
-        user: mappedUser,
+        user,
         isAuthenticated: true,
         isLoading: false,
         error: null,
@@ -105,16 +82,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         return { success: false, error: error.message };
       }
 
-      const mappedUser = mapUser(user);
-
-      // Save demo session if not using real Supabase
-      if (!isSupabaseConfigured && user) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        authService.saveDemoSession(user as any);
-      }
-
       set({
-        user: mappedUser,
+        user,
         isAuthenticated: true,
         isLoading: false,
         error: null,
@@ -133,11 +102,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     try {
       await authService.signOut();
-
-      // Clear demo session
-      if (!isSupabaseConfigured) {
-        authService.clearDemoSession();
-      }
 
       set({
         user: null,

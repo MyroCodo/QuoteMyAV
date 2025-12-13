@@ -61,30 +61,6 @@ export function isAIConfigured(): boolean {
 }
 
 /**
- * Extract JSON from AI response that may contain markdown or extra text
- */
-function extractJSON(text: string): any {
-  // Try to parse directly first
-  try {
-    return JSON.parse(text);
-  } catch {
-    // Look for JSON in markdown code blocks
-    const codeBlockMatch = text.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
-    if (codeBlockMatch) {
-      return JSON.parse(codeBlockMatch[1]);
-    }
-
-    // Look for JSON object anywhere in the text
-    const jsonMatch = text.match(/\{[\s\S]*"lineItems"[\s\S]*\}/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
-    }
-
-    throw new Error('Could not extract JSON from AI response');
-  }
-}
-
-/**
  * Validate that the AI response has the expected structure
  */
 function validateAIResponse(data: any): data is AIResponseData {

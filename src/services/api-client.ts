@@ -8,14 +8,21 @@ export const isApiConfigured = Boolean(API_BASE_URL);
 
 // API Error class
 export class ApiError extends Error {
+  public statusCode: number;
+  public code: string;
+  public details?: Record<string, unknown>;
+
   constructor(
-    public statusCode: number,
-    public code: string,
+    statusCode: number,
+    code: string,
     message: string,
-    public details?: Record<string, unknown>
+    details?: Record<string, unknown>
   ) {
     super(message);
     this.name = 'ApiError';
+    this.statusCode = statusCode;
+    this.code = code;
+    this.details = details;
   }
 }
 

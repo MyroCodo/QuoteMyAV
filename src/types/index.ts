@@ -30,6 +30,7 @@ export interface Quote {
   status: QuoteStatus;
   totalAmount: number;
   lineItems: LineItem[];
+  notes?: string;
   createdAt: string;
   updatedAt: string;
   expiresAt: string;

@@ -17,6 +17,9 @@ export { ChangeLogItem, ChangeLog } from './ChangeLogItem';
 export { VersionHistoryPanel } from './VersionHistoryPanel';
 export { VersionCompareModal } from './VersionCompareModal';
 
+// Email components
+export { SendQuoteModal } from './SendQuoteModal';
+
 // Shared constants
 export {
   categoryColors,

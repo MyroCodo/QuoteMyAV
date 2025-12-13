@@ -92,10 +92,15 @@ app.notFound((c) => {
   );
 });
 
-// Vercel Edge Runtime config
+// Vercel Edge Runtime config (used when deployed to Vercel)
 export const config = {
   runtime: 'edge',
 };
 
 // Export for Vercel Edge
 export default app;
+
+// Export for AWS Lambda
+// The Lambda handler is created using hono/aws-lambda adapter
+import { handle } from 'hono/aws-lambda';
+export const handler = handle(app);
