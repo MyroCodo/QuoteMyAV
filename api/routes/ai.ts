@@ -1,12 +1,12 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { nanoid } from 'nanoid';
-import { getSupabaseAdmin } from '../lib/supabase';
-import { Errors } from '../lib/errors';
-import { aiGenerateSchema, aiEditSchema } from '../lib/validators';
-import { aiRateLimitMiddleware } from '../middleware/rateLimit';
-import { quotaCheckMiddleware } from '../middleware/quota';
-import type { Variables } from '../index';
+import { getSupabaseAdmin } from '../lib/supabase.js';
+import { Errors } from '../lib/errors.js';
+import { aiGenerateSchema, aiEditSchema } from '../lib/validators.js';
+import { aiRateLimitMiddleware } from '../middleware/rateLimit.js';
+import { quotaCheckMiddleware } from '../middleware/quota.js';
+import type { Variables } from '../index.js';
 
 const router = new Hono<{ Variables: Variables }>();
 

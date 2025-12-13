@@ -1,13 +1,13 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import bcrypt from 'bcryptjs';
 import { nanoid } from 'nanoid';
-import { getSupabaseAdmin } from '../lib/supabase';
-import { Errors } from '../lib/errors';
-import { apiKeyCreateSchema } from '../lib/validators';
-import { getQuotaStatus } from '../middleware/quota';
-import { requireTier } from '../middleware/auth';
-import type { Variables } from '../index';
+import { hashSecret } from '../lib/crypto.js';
+import { getSupabaseAdmin } from '../lib/supabase.js';
+import { Errors } from '../lib/errors.js';
+import { apiKeyCreateSchema } from '../lib/validators.js';
+import { getQuotaStatus } from '../middleware/quota.js';
+import { requireTier } from '../middleware/auth.js';
+import type { Variables } from '../index.js';
 
 const router = new Hono<{ Variables: Variables }>();
 
@@ -134,7 +134,7 @@ router.post(
     const keyPrefix = keySecret.substring(0, 8);
 
     // Hash the key
-    const keyHash = await bcrypt.hash(fullKey, 12);
+    const keyHash = await hashSecret(fullKey);
 
     // Calculate expiry if specified
     const expiresAt = body.expiresInDays

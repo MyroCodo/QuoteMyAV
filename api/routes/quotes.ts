@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { nanoid } from 'nanoid';
-import { getSupabaseAdmin } from '../lib/supabase';
-import { Errors } from '../lib/errors';
+import { getSupabaseAdmin } from '../lib/supabase.js';
+import { Errors } from '../lib/errors.js';
 import {
   quoteCreateSchema,
   quoteUpdateSchema,
@@ -12,9 +12,9 @@ import {
   lineItemUpdateSchema,
   versionCompareSchema,
   VALID_STATUS_TRANSITIONS,
-} from '../lib/validators';
-import { quotaCheckMiddleware, incrementQuotaUsage } from '../middleware/quota';
-import type { Variables } from '../index';
+} from '../lib/validators.js';
+import { quotaCheckMiddleware, incrementQuotaUsage } from '../middleware/quota.js';
+import type { Variables } from '../index.js';
 
 const router = new Hono<{ Variables: Variables }>();
 

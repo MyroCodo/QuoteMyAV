@@ -1,10 +1,10 @@
 import type { Context, Next } from 'hono';
 import { createMiddleware } from 'hono/factory';
-import bcrypt from 'bcryptjs';
-import { getSupabaseAdmin, getSupabaseAnon } from '../lib/supabase';
-import { Errors } from '../lib/errors';
-import type { Variables } from '../index';
-import type { SubscriptionTier } from '../lib/types';
+import { verifySecret } from '../lib/crypto.js';
+import { getSupabaseAdmin, getSupabaseAnon } from '../lib/supabase.js';
+import { Errors } from '../lib/errors.js';
+import type { Variables } from '../index.js';
+import type { SubscriptionTier } from '../lib/types.js';
 
 // API key format: qmav_live_xxx or qmav_test_xxx
 const API_KEY_PREFIX_LIVE = 'qmav_live_';
@@ -89,7 +89,7 @@ async function verifyApiKey(apiKey: string): Promise<AuthResult | null> {
     }
 
     // Verify key hash
-    const isValid = await bcrypt.compare(apiKey, apiKeyRecord.key_hash);
+    const isValid = await verifySecret(apiKey, apiKeyRecord.key_hash);
     if (!isValid) {
       console.error('[Auth] API key hash mismatch');
       return null;

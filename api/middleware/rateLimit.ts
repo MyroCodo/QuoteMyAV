@@ -1,22 +1,23 @@
 import { createMiddleware } from 'hono/factory';
-import { getSupabaseAdmin } from '../lib/supabase';
-import { Errors } from '../lib/errors';
-import { RATE_LIMITS, type SubscriptionTier } from '../lib/types';
-import type { Variables } from '../index';
+import { getSupabaseAdmin } from '../lib/supabase.js';
+import { Errors } from '../lib/errors.js';
+import { RATE_LIMITS, type SubscriptionTier } from '../lib/types.js';
+import type { Variables } from '../index.js';
 
 // In-memory rate limit store (for edge runtime)
-// In production, use Redis or Upstash
+// Note: In a serverless environment, this store is ephemeral per instance
+// For production, use Redis or Upstash for persistent rate limiting
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
 
-// Clean up expired entries periodically
-setInterval(() => {
+// Clean up expired entries on access (lazy cleanup since setInterval doesn't work in Edge)
+function cleanupExpiredEntries() {
   const now = Date.now();
   for (const [key, value] of rateLimitStore.entries()) {
     if (value.resetAt < now) {
       rateLimitStore.delete(key);
     }
   }
-}, 60000); // Every minute
+}
 
 // Get today's date in YYYY-MM-DD format
 function getToday(): string {
@@ -111,6 +112,9 @@ export async function checkAiRateLimit(
   userId: string,
   tier: SubscriptionTier
 ): Promise<{ allowed: boolean; limit: number; remaining: number; resetAt: number }> {
+  // Lazy cleanup of expired entries
+  cleanupExpiredEntries();
+
   const limits = RATE_LIMITS[tier];
 
   // No AI access for free/starter tiers via API

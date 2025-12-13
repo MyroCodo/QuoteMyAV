@@ -1,13 +1,13 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import bcrypt from 'bcryptjs';
 import { nanoid } from 'nanoid';
-import { getSupabaseAdmin } from '../lib/supabase';
-import { Errors } from '../lib/errors';
-import { webhookCreateSchema, webhookUpdateSchema } from '../lib/validators';
-import { requireTier } from '../middleware/auth';
-import type { Variables } from '../index';
-import type { WebhookEventType, WebhookPayload } from '../lib/types';
+import { hashSecret } from '../lib/crypto.js';
+import { getSupabaseAdmin } from '../lib/supabase.js';
+import { Errors } from '../lib/errors.js';
+import { webhookCreateSchema, webhookUpdateSchema } from '../lib/validators.js';
+import { requireTier } from '../middleware/auth.js';
+import type { Variables } from '../index.js';
+import type { WebhookEventType, WebhookPayload } from '../lib/types.js';
 
 const router = new Hono<{ Variables: Variables }>();
 
@@ -51,7 +51,7 @@ router.post('/', zValidator('json', webhookCreateSchema), async (c) => {
 
   // Generate or hash secret
   const secret = body.secret || nanoid(32);
-  const secretHash = await bcrypt.hash(secret, 12);
+  const secretHash = await hashSecret(secret);
 
   const webhookId = nanoid(12);
 
