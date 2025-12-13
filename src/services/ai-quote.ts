@@ -1,4 +1,5 @@
 import type { LineItem, LineItemCategory } from '../types';
+import { apiPost, isApiConfigured, apiGet } from './api-client';
 
 // Input types for the AI quote generation
 export interface EventDetails {
@@ -41,16 +42,22 @@ interface AIResponseData {
   summary: string;
 }
 
-interface N8NWebhookResponse {
-  output: string;
+// AI Job types
+interface AIJob {
+  jobId: string;
+  type: string;
+  status: 'processing' | 'completed' | 'failed';
+  result?: AIResponseData;
+  error?: { code: string; message: string };
+  createdAt: string;
+  completedAt?: string;
 }
 
 /**
  * Check if the AI service is configured
  */
 export function isAIConfigured(): boolean {
-  const webhookUrl = import.meta.env.VITE_N8N_AI_WEBHOOK_URL;
-  return typeof webhookUrl === 'string' && webhookUrl.length > 0;
+  return isApiConfigured;
 }
 
 /**
@@ -99,60 +106,73 @@ function validateAIResponse(data: any): data is AIResponseData {
 }
 
 /**
- * Generate AI-powered quote using n8n webhook
+ * Poll for AI job completion
+ */
+async function pollAIJob(jobId: string, timeout = 60000, interval = 1000): Promise<AIJob> {
+  const startTime = Date.now();
+
+  while (Date.now() - startTime < timeout) {
+    const response = await apiGet<AIJob>(`/v1/ai/jobs/${jobId}`);
+    const job = response.data;
+
+    if (!job) {
+      throw new Error(`Job ${jobId} not found`);
+    }
+
+    if (job.status === 'completed') {
+      return job;
+    }
+
+    if (job.status === 'failed') {
+      throw new Error(job.error?.message || 'AI generation failed');
+    }
+
+    // Wait before polling again
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
+
+  throw new Error(`AI job ${jobId} timed out after ${timeout}ms`);
+}
+
+/**
+ * Generate AI-powered quote using the API
  */
 export async function generateAIQuote(
   eventDetails: EventDetails,
   equipment: EquipmentNeeds
 ): Promise<AIQuoteResponse> {
-  const webhookUrl = import.meta.env.VITE_N8N_AI_WEBHOOK_URL;
-
-  if (!webhookUrl) {
-    throw new Error('AI service not configured. Please set VITE_N8N_AI_WEBHOOK_URL in .env');
+  if (!isApiConfigured) {
+    throw new Error('API service not configured. Please set VITE_API_URL in .env');
   }
 
-  // Build the prompt message
-  const message = `Generate an AV equipment quote for:
-Event: ${eventDetails.eventName}
-Type: ${eventDetails.eventType}
-Venue: ${eventDetails.venueName} (${eventDetails.venueSize})
-Dates: ${eventDetails.startDate} to ${eventDetails.endDate}
-Setup: ${eventDetails.setupDays} days, Strike: ${eventDetails.strikeDays} days
-Categories needed: ${equipment.categories.join(', ')}
-Budget: ${equipment.budgetRange}
-Special requests: ${equipment.specificRequests || 'None'}
-Notes: ${eventDetails.notes || 'None'}
-
-Return a JSON object with this structure:
-{
-  "lineItems": [
-    { "category": "audio|video|lighting|staging|rigging|cables|signal|decor|power|comms|labor|other", "description": "Item name", "quantity": number, "unitPrice": number, "total": number }
-  ],
-  "totalAmount": number,
-  "summary": "Brief quote summary"
-}`;
-
   try {
-    // Call the n8n webhook
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    // Start the AI generation job
+    const startResponse = await apiPost<{ jobId: string; status: string }>('/v1/ai/generate', {
+      eventDetails: {
+        eventName: eventDetails.eventName,
+        eventType: eventDetails.eventType,
+        venueSize: eventDetails.venueSize,
+        venueName: eventDetails.venueName,
+        dates: `${eventDetails.startDate} to ${eventDetails.endDate}`,
       },
-      body: JSON.stringify({ message }),
+      equipment: {
+        categories: equipment.categories,
+        budgetRange: equipment.budgetRange,
+        specificRequests: equipment.specificRequests,
+      },
     });
 
-    if (!response.ok) {
-      throw new Error(`n8n webhook returned ${response.status}: ${response.statusText}`);
+    const jobId = startResponse.data?.jobId;
+    if (!jobId) {
+      throw new Error('Failed to start AI generation job');
     }
 
-    const data: N8NWebhookResponse = await response.json();
+    // Poll for completion
+    const job = await pollAIJob(jobId);
 
-    // Extract and parse the AI's response
-    const aiData = extractJSON(data.output);
-
-    // Validate the structure
-    if (!validateAIResponse(aiData)) {
+    // Extract the result
+    const aiData = job.result;
+    if (!aiData || !validateAIResponse(aiData)) {
       throw new Error('AI response does not match expected format');
     }
 
@@ -166,7 +186,6 @@ Return a JSON object with this structure:
       lineItems,
       totalAmount: aiData.totalAmount,
       summary: aiData.summary,
-      rawResponse: data.output,
     };
   } catch (error) {
     if (error instanceof Error) {

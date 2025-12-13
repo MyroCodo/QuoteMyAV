@@ -1,10 +1,5 @@
 import type { Quote, LineItem } from '../types';
-
-// n8n webhook base URL
-const N8N_WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || '';
-
-// Check if n8n is configured
-export const isN8nConfigured = Boolean(N8N_WEBHOOK_URL);
+import { apiGet, apiPost, apiPatch, apiDelete, isApiConfigured } from './api-client';
 
 // Local storage key for demo mode
 const DEMO_QUOTES_KEY = 'quotemyav-demo-quotes';
@@ -20,48 +15,33 @@ const saveDemoQuotes = (quotes: Quote[]) => {
   localStorage.setItem(DEMO_QUOTES_KEY, JSON.stringify(quotes));
 };
 
-// Helper for n8n API calls
-const n8nFetch = async (path: string, options: RequestInit = {}) => {
-  const url = `${N8N_WEBHOOK_URL}${path}`;
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`n8n request failed: ${response.statusText}`);
-  }
-
-  return response.json();
-};
+// Re-export for backward compatibility
+export { isApiConfigured };
 
 export const quoteService = {
   // Fetch all quotes for the current user
-  async getQuotes(userId: string): Promise<{ quotes: Quote[]; error: Error | null }> {
-    if (!isN8nConfigured) {
+  async getQuotes(_userId: string): Promise<{ quotes: Quote[]; error: Error | null }> {
+    if (!isApiConfigured) {
       // Demo mode - use localStorage
-      const quotes = getDemoQuotes().filter((q) => q.userId === userId);
+      const quotes = getDemoQuotes();
       return { quotes, error: null };
     }
 
     try {
-      const response = await n8nFetch(`/quotes?userId=${encodeURIComponent(userId)}`);
-      const quotes = response.quotes || [];
+      const response = await apiGet<Quote[]>('/v1/quotes');
+      const quotes = response.data || [];
       return { quotes, error: null };
     } catch (err) {
-      console.error('Failed to fetch quotes from n8n:', err);
+      console.error('Failed to fetch quotes from API:', err);
       // Fallback to localStorage
-      const quotes = getDemoQuotes().filter((q) => q.userId === userId);
+      const quotes = getDemoQuotes();
       return { quotes, error: err as Error };
     }
   },
 
   // Fetch a single quote by ID
   async getQuote(quoteId: string): Promise<{ quote: Quote | null; error: Error | null }> {
-    if (!isN8nConfigured) {
+    if (!isApiConfigured) {
       // Demo mode
       const quotes = getDemoQuotes();
       const quote = quotes.find((q) => q.id === quoteId) || null;
@@ -69,10 +49,10 @@ export const quoteService = {
     }
 
     try {
-      const response = await n8nFetch(`/quotes/${quoteId}`);
-      return { quote: response.quote || null, error: null };
+      const response = await apiGet<Quote>(`/v1/quotes/${quoteId}`);
+      return { quote: response.data || null, error: null };
     } catch (err) {
-      console.error('Failed to fetch quote from n8n:', err);
+      console.error('Failed to fetch quote from API:', err);
       // Fallback to localStorage
       const quotes = getDemoQuotes();
       const quote = quotes.find((q) => q.id === quoteId) || null;
@@ -94,20 +74,25 @@ export const quoteService = {
     localQuotes.unshift(localQuote);
     saveDemoQuotes(localQuotes);
 
-    if (!isN8nConfigured) {
+    if (!isApiConfigured) {
       return { quote: localQuote, error: null };
     }
 
     try {
-      const response = await n8nFetch('/quotes', {
-        method: 'POST',
-        body: JSON.stringify(quote),
+      const response = await apiPost<Quote>('/v1/quotes', {
+        clientName: quote.clientName,
+        clientEmail: quote.clientEmail,
+        eventName: quote.eventName,
+        eventDate: quote.eventDate,
+        venue: quote.venue,
+        lineItems: quote.lineItems,
+        notes: quote.notes,
       });
 
-      const savedQuote = response.quote || localQuote;
+      const savedQuote = response.data || localQuote;
 
       // Update localStorage with the server-generated ID
-      if (response.quote) {
+      if (response.data) {
         const updatedQuotes = localQuotes.map((q) =>
           q.id === localQuote.id ? savedQuote : q
         );
@@ -116,7 +101,7 @@ export const quoteService = {
 
       return { quote: savedQuote, error: null };
     } catch (err) {
-      console.error('Failed to save quote to n8n:', err);
+      console.error('Failed to save quote to API:', err);
       // Quote is already in localStorage, so return it
       return { quote: localQuote, error: err as Error };
     }
@@ -136,17 +121,14 @@ export const quoteService = {
       saveDemoQuotes(quotes);
     }
 
-    if (!isN8nConfigured) {
+    if (!isApiConfigured) {
       return { quote: index !== -1 ? quotes[index] : null, error: null };
     }
 
     try {
-      const response = await n8nFetch(`/quotes/${quoteId}`, {
-        method: 'PUT',
-        body: JSON.stringify(updates),
-      });
+      const response = await apiPatch<Quote>(`/v1/quotes/${quoteId}`, updates);
 
-      const updatedQuote = response.quote;
+      const updatedQuote = response.data;
 
       // Sync with localStorage
       if (updatedQuote && index !== -1) {
@@ -156,7 +138,7 @@ export const quoteService = {
 
       return { quote: updatedQuote || quotes[index], error: null };
     } catch (err) {
-      console.error('Failed to update quote in n8n:', err);
+      console.error('Failed to update quote in API:', err);
       return { quote: index !== -1 ? quotes[index] : null, error: err as Error };
     }
   },
@@ -167,17 +149,15 @@ export const quoteService = {
     const quotes = getDemoQuotes().filter((q) => q.id !== quoteId);
     saveDemoQuotes(quotes);
 
-    if (!isN8nConfigured) {
+    if (!isApiConfigured) {
       return { error: null };
     }
 
     try {
-      await n8nFetch(`/quotes/${quoteId}`, {
-        method: 'DELETE',
-      });
+      await apiDelete(`/v1/quotes/${quoteId}`);
       return { error: null };
     } catch (err) {
-      console.error('Failed to delete quote from n8n:', err);
+      console.error('Failed to delete quote from API:', err);
       return { error: err as Error };
     }
   },

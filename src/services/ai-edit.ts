@@ -1,5 +1,6 @@
 import type { LineItem, LineItemCategory } from '../types';
 import type { AIEditResult, AIChange } from '../stores/aiEditStore';
+import { apiPost, apiGet, isApiConfigured } from './api-client';
 
 // Quick action types
 export type QuickAction =
@@ -105,8 +106,7 @@ interface AIEditResponseData {
  * Check if AI edit service is configured
  */
 export function isAIEditConfigured(): boolean {
-  const webhookUrl = import.meta.env.VITE_N8N_AI_WEBHOOK_URL;
-  return typeof webhookUrl === 'string' && webhookUrl.length > 0;
+  return isApiConfigured;
 }
 
 /**
@@ -190,35 +190,76 @@ IMPORTANT:
   return prompt;
 }
 
+// AI Job types for edit
+interface AIEditJob {
+  jobId: string;
+  type: string;
+  status: 'processing' | 'completed' | 'failed';
+  result?: AIEditResponseData;
+  error?: { code: string; message: string };
+  createdAt: string;
+  completedAt?: string;
+}
+
+/**
+ * Poll for AI edit job completion
+ */
+async function pollAIEditJob(jobId: string, timeout = 60000, interval = 1000): Promise<AIEditJob> {
+  const startTime = Date.now();
+
+  while (Date.now() - startTime < timeout) {
+    const response = await apiGet<AIEditJob>(`/v1/ai/jobs/${jobId}`);
+    const job = response.data;
+
+    if (!job) {
+      throw new Error(`Job ${jobId} not found`);
+    }
+
+    if (job.status === 'completed') {
+      return job;
+    }
+
+    if (job.status === 'failed') {
+      throw new Error(job.error?.message || 'AI edit failed');
+    }
+
+    // Wait before polling again
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
+
+  throw new Error(`AI edit job ${jobId} timed out after ${timeout}ms`);
+}
+
 /**
  * Send edit command to AI and get modified quote
  */
 export async function sendAIEditCommand(request: AIEditRequest): Promise<AIEditResult> {
-  const webhookUrl = import.meta.env.VITE_N8N_AI_WEBHOOK_URL;
-
-  if (!webhookUrl) {
-    throw new Error('AI webhook URL not configured');
+  if (!isApiConfigured) {
+    throw new Error('API not configured');
   }
-
-  const prompt = buildEditPrompt(request);
 
   console.log('Sending AI edit command:', request.command);
 
-  const response = await fetch(webhookUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ message: prompt }),
+  // Start the AI edit job
+  const startResponse = await apiPost<{ jobId: string; status: string }>('/v1/ai/edit', {
+    quoteId: (request as AIEditRequest & { quoteId?: string }).quoteId,
+    command: request.command,
+    quickAction: (request as AIEditRequest & { quickAction?: string }).quickAction,
+    targetBudget: request.constraints?.targetBudget,
   });
 
-  if (!response.ok) {
-    throw new Error(`AI service error: ${response.status}`);
+  const jobId = startResponse.data?.jobId;
+  if (!jobId) {
+    throw new Error('Failed to start AI edit job');
   }
 
-  const data = await response.json();
-  const outputText = data.output || JSON.stringify(data);
-  const parsed = extractJSON(outputText);
+  // Poll for completion
+  const job = await pollAIEditJob(jobId);
+  const parsed = job.result;
+
+  if (!parsed) {
+    throw new Error('AI edit returned no result');
+  }
 
   // Process and validate the response
   const modifiedLineItems: LineItem[] = parsed.lineItems.map((item, index) => ({
