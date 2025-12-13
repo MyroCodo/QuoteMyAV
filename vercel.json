@@ -9,11 +9,6 @@
       "destination": "/api"
     }
   ],
-  "functions": {
-    "api/index.ts": {
-      "runtime": "edge"
-    }
-  },
   "headers": [
     {
       "source": "/v1/(.*)",

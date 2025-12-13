@@ -92,5 +92,10 @@ app.notFound((c) => {
   );
 });
 
+// Vercel Edge Runtime config
+export const config = {
+  runtime: 'edge',
+};
+
 // Export for Vercel Edge
 export default app;
