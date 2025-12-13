@@ -1,0 +1,175 @@
+{
+  "name": "QuoteMyAV - Quotes Local Storage",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "quotes",
+        "responseMode": "lastNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+          }
+        }
+      },
+      "id": "create-webhook",
+      "name": "Create Quote Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "quotes-create"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\nconst quoteId = 'QM-' + Date.now();\nconst now = new Date().toISOString();\n\nconst quote = {\n  ...body,\n  id: quoteId,\n  createdAt: now,\n  updatedAt: now\n};\n\n// Get existing quotes from workflow static data\nconst staticData = $getWorkflowStaticData('global');\nif (!staticData.quotes) {\n  staticData.quotes = {};\n}\n\n// Save the quote\nstaticData.quotes[quoteId] = quote;\n\nreturn { json: { success: true, quote } };"
+      },
+      "id": "create-handler",
+      "name": "Create Quote",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "quotes",
+        "responseMode": "lastNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+          }
+        }
+      },
+      "id": "list-webhook",
+      "name": "List Quotes Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 500],
+      "webhookId": "quotes-list"
+    },
+    {
+      "parameters": {
+        "jsCode": "const webhook = $input.first().json;\nconst userId = webhook.query?.userId;\n\n// Get quotes from workflow static data\nconst staticData = $getWorkflowStaticData('global');\nconst allQuotes = staticData.quotes || {};\n\n// Convert to array and filter by userId if provided\nlet quotes = Object.values(allQuotes);\n\nif (userId) {\n  quotes = quotes.filter(q => q.userId === userId);\n}\n\n// Sort by creation date (newest first)\nquotes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));\n\nreturn { json: { success: true, quotes } };"
+      },
+      "id": "list-handler",
+      "name": "List Quotes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 500]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "quotes/:id",
+        "responseMode": "lastNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+          }
+        }
+      },
+      "id": "get-webhook",
+      "name": "Get Quote Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 700],
+      "webhookId": "quotes-get"
+    },
+    {
+      "parameters": {
+        "jsCode": "const webhook = $input.first().json;\nconst quoteId = webhook.params?.id;\n\n// Get quotes from workflow static data\nconst staticData = $getWorkflowStaticData('global');\nconst quote = staticData.quotes?.[quoteId];\n\nif (!quote) {\n  return { json: { success: false, error: 'Quote not found' } };\n}\n\nreturn { json: { success: true, quote } };"
+      },
+      "id": "get-handler",
+      "name": "Get Quote",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 700]
+    },
+    {
+      "parameters": {
+        "httpMethod": "PUT",
+        "path": "quotes/:id",
+        "responseMode": "lastNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+          }
+        }
+      },
+      "id": "update-webhook",
+      "name": "Update Quote Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 900],
+      "webhookId": "quotes-update"
+    },
+    {
+      "parameters": {
+        "jsCode": "const webhook = $input.first().json;\nconst quoteId = webhook.params?.id;\nconst updates = webhook.body || {};\n\n// Get quotes from workflow static data\nconst staticData = $getWorkflowStaticData('global');\n\nif (!staticData.quotes?.[quoteId]) {\n  return { json: { success: false, error: 'Quote not found' } };\n}\n\n// Update the quote\nconst existing = staticData.quotes[quoteId];\nconst updatedQuote = {\n  ...existing,\n  ...updates,\n  id: existing.id,\n  createdAt: existing.createdAt,\n  updatedAt: new Date().toISOString()\n};\n\nstaticData.quotes[quoteId] = updatedQuote;\n\nreturn { json: { success: true, quote: updatedQuote } };"
+      },
+      "id": "update-handler",
+      "name": "Update Quote",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 900]
+    },
+    {
+      "parameters": {
+        "httpMethod": "DELETE",
+        "path": "quotes/:id",
+        "responseMode": "lastNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+          }
+        }
+      },
+      "id": "delete-webhook",
+      "name": "Delete Quote Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 1100],
+      "webhookId": "quotes-delete"
+    },
+    {
+      "parameters": {
+        "jsCode": "const webhook = $input.first().json;\nconst quoteId = webhook.params?.id;\n\n// Get quotes from workflow static data\nconst staticData = $getWorkflowStaticData('global');\n\nif (staticData.quotes?.[quoteId]) {\n  delete staticData.quotes[quoteId];\n}\n\nreturn { json: { success: true, deleted: true } };"
+      },
+      "id": "delete-handler",
+      "name": "Delete Quote",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 1100]
+    }
+  ],
+  "connections": {
+    "Create Quote Webhook": {
+      "main": [[{ "node": "Create Quote", "type": "main", "index": 0 }]]
+    },
+    "List Quotes Webhook": {
+      "main": [[{ "node": "List Quotes", "type": "main", "index": 0 }]]
+    },
+    "Get Quote Webhook": {
+      "main": [[{ "node": "Get Quote", "type": "main", "index": 0 }]]
+    },
+    "Update Quote Webhook": {
+      "main": [[{ "node": "Update Quote", "type": "main", "index": 0 }]]
+    },
+    "Delete Quote Webhook": {
+      "main": [[{ "node": "Delete Quote", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

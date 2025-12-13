@@ -1,0 +1,1817 @@
+openapi: 3.0.3
+info:
+  title: QuoteMyAV API
+  description: |
+    REST API for QuoteMyAV - AI-powered AV quote generation platform.
+
+    ## Authentication
+
+    The API supports two authentication methods:
+
+    ### JWT Authentication (Web Users)
+    Use Supabase JWT tokens in the `Authorization` header:
+    ```
+    Authorization: Bearer <jwt_token>
+    ```
+
+    ### API Key Authentication (Pro/Enterprise)
+    Use API keys in the `X-API-Key` header:
+    ```
+    X-API-Key: qmav_live_xxxxx
+    ```
+
+    ## Rate Limits
+
+    | Tier | API Calls/Day | AI Calls/Hour |
+    |------|---------------|---------------|
+    | Pro | 100 | 20 |
+    | Enterprise | 10,000 | 500 |
+
+    Rate limit headers are included in all responses:
+    - `X-RateLimit-Limit`: Maximum requests allowed
+    - `X-RateLimit-Remaining`: Requests remaining
+    - `X-RateLimit-Reset`: Unix timestamp when limit resets
+
+    ## Quotas
+
+    | Tier | Monthly Quote Limit |
+    |------|---------------------|
+    | Free | 3 |
+    | Starter | 25 |
+    | Pro | Unlimited |
+    | Enterprise | Unlimited |
+
+    Quota headers are included in quote operations:
+    - `X-Quota-Limit`: Maximum quotes for period
+    - `X-Quota-Used`: Quotes used this period
+    - `X-Quota-Reset`: ISO timestamp when quota resets
+
+  version: 1.0.0
+  contact:
+    name: QuoteMyAV Support
+    email: support@quotemyav.com
+  license:
+    name: Proprietary
+    url: https://quotemyav.com/terms
+
+servers:
+  - url: https://api.quotemyav.com/v1
+    description: Production
+  - url: https://api-staging.quotemyav.com/v1
+    description: Staging
+  - url: http://localhost:3000/v1
+    description: Local Development
+
+tags:
+  - name: Quotes
+    description: Quote management operations
+  - name: Line Items
+    description: Quote line item operations
+  - name: Versions
+    description: Quote version history
+  - name: AI
+    description: AI-powered quote generation and editing
+  - name: Users
+    description: User profile and API key management
+  - name: Webhooks
+    description: Webhook endpoint management (Enterprise only)
+
+security:
+  - BearerAuth: []
+  - ApiKeyAuth: []
+
+paths:
+  /quotes:
+    get:
+      tags: [Quotes]
+      summary: List quotes
+      description: Returns a paginated list of quotes for the authenticated user
+      operationId: listQuotes
+      parameters:
+        - name: status
+          in: query
+          description: Filter by quote status
+          schema:
+            $ref: '#/components/schemas/QuoteStatus'
+        - name: search
+          in: query
+          description: Search in client name, event name, or venue
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Number of results per page (max 100)
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: Number of results to skip
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: sort
+          in: query
+          description: Sort field (prefix with - for descending)
+          schema:
+            type: string
+            enum: [createdAt, -createdAt, updatedAt, -updatedAt, totalAmount, -totalAmount, eventDate, -eventDate]
+            default: -createdAt
+      responses:
+        '200':
+          description: List of quotes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/QuoteSummary'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+    post:
+      tags: [Quotes]
+      summary: Create a quote
+      description: Creates a new quote for the authenticated user
+      operationId: createQuote
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests (recommended)
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteCreate'
+      responses:
+        '201':
+          description: Quote created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Quote'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/QuotaExceeded'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /quotes/{quoteId}:
+    get:
+      tags: [Quotes]
+      summary: Get a quote
+      description: Returns a single quote by ID
+      operationId: getQuote
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+      responses:
+        '200':
+          description: Quote details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Quote'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags: [Quotes]
+      summary: Update a quote
+      description: Updates an existing quote. Cannot update quotes with status sent, accepted, rejected, or expired.
+      operationId: updateQuote
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteUpdate'
+      responses:
+        '200':
+          description: Quote updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Quote'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/QuoteReadOnly'
+
+    delete:
+      tags: [Quotes]
+      summary: Delete a quote
+      description: Soft deletes a quote. The quote can be restored within 30 days.
+      operationId: deleteQuote
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+      responses:
+        '204':
+          description: Quote deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /quotes/{quoteId}/clone:
+    post:
+      tags: [Quotes]
+      summary: Clone a quote
+      description: Creates a copy of an existing quote with draft status
+      operationId: cloneQuote
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+      responses:
+        '201':
+          description: Quote cloned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Quote'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/QuotaExceeded'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /quotes/{quoteId}/send:
+    post:
+      tags: [Quotes]
+      summary: Send quote to client
+      description: Sends the quote to the client via email and updates status to 'sent'
+      operationId: sendQuote
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipientEmail:
+                  type: string
+                  format: email
+                  description: Override the client email
+                message:
+                  type: string
+                  description: Custom message to include in the email
+                  maxLength: 2000
+      responses:
+        '200':
+          description: Quote sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      sentAt:
+                        type: string
+                        format: date-time
+                      expiresAt:
+                        type: string
+                        format: date-time
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          description: Quote cannot be sent (invalid status)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /quotes/{quoteId}/items:
+    post:
+      tags: [Line Items]
+      summary: Add line item
+      description: Adds a new line item to the quote
+      operationId: addLineItem
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineItemCreate'
+      responses:
+        '201':
+          description: Line item added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/LineItem'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/QuoteReadOnly'
+
+    put:
+      tags: [Line Items]
+      summary: Replace all line items
+      description: Replaces all line items in the quote with the provided list
+      operationId: replaceLineItems
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items]
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/LineItemCreate'
+      responses:
+        '200':
+          description: Line items replaced successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LineItem'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/QuoteReadOnly'
+
+  /quotes/{quoteId}/items/{itemId}:
+    patch:
+      tags: [Line Items]
+      summary: Update line item
+      description: Updates an existing line item
+      operationId: updateLineItem
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+        - $ref: '#/components/parameters/ItemId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineItemUpdate'
+      responses:
+        '200':
+          description: Line item updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/LineItem'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/QuoteReadOnly'
+
+    delete:
+      tags: [Line Items]
+      summary: Delete line item
+      description: Removes a line item from the quote
+      operationId: deleteLineItem
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+        - $ref: '#/components/parameters/ItemId'
+      responses:
+        '204':
+          description: Line item deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/QuoteReadOnly'
+
+  /quotes/{quoteId}/versions:
+    get:
+      tags: [Versions]
+      summary: List quote versions
+      description: Returns the version history for a quote
+      operationId: listQuoteVersions
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+      responses:
+        '200':
+          description: List of versions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/QuoteVersion'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /quotes/{quoteId}/versions/{versionId}:
+    get:
+      tags: [Versions]
+      summary: Get quote version
+      description: Returns a specific version snapshot
+      operationId: getQuoteVersion
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+        - $ref: '#/components/parameters/VersionId'
+      responses:
+        '200':
+          description: Version details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/QuoteVersion'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /quotes/{quoteId}/versions/compare:
+    get:
+      tags: [Versions]
+      summary: Compare versions
+      description: Returns a diff between two versions
+      operationId: compareVersions
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+        - name: a
+          in: query
+          required: true
+          description: First version ID
+          schema:
+            type: string
+        - name: b
+          in: query
+          required: true
+          description: Second version ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Version comparison
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/VersionDiff'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /quotes/{quoteId}/versions/{versionId}/revert:
+    post:
+      tags: [Versions]
+      summary: Revert to version
+      description: Reverts the quote to a previous version
+      operationId: revertToVersion
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+        - $ref: '#/components/parameters/VersionId'
+      responses:
+        '200':
+          description: Quote reverted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Quote'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/QuoteReadOnly'
+
+  /ai/generate:
+    post:
+      tags: [AI]
+      summary: Generate quote with AI
+      description: |
+        Starts an async AI job to generate a quote based on event details and equipment requirements.
+        Returns immediately with a job ID - poll `/ai/jobs/{jobId}` for results.
+      operationId: aiGenerate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIGenerateRequest'
+      responses:
+        '202':
+          description: AI job started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      jobId:
+                        type: string
+                        example: job-abc123xyz456
+                      status:
+                        type: string
+                        enum: [processing]
+                      message:
+                        type: string
+                        example: AI generation started. Poll /v1/ai/jobs/:jobId for status.
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/QuotaExceeded'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /ai/edit:
+    post:
+      tags: [AI]
+      summary: Edit quote with AI
+      description: |
+        Starts an async AI job to modify an existing quote using natural language commands.
+        Returns immediately with a job ID - poll `/ai/jobs/{jobId}` for results.
+      operationId: aiEdit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIEditRequest'
+      responses:
+        '202':
+          description: AI job started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      jobId:
+                        type: string
+                      status:
+                        type: string
+                        enum: [processing]
+                      message:
+                        type: string
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/QuoteReadOnly'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /ai/jobs/{jobId}:
+    get:
+      tags: [AI]
+      summary: Get AI job status
+      description: Returns the status and result of an AI job
+      operationId: getAIJob
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AIJob'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /me:
+    get:
+      tags: [Users]
+      summary: Get current user
+      description: Returns the authenticated user's profile
+      operationId: getCurrentUser
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /me/subscription:
+    get:
+      tags: [Users]
+      summary: Get subscription status
+      description: Returns the user's subscription and usage information
+      operationId: getSubscription
+      responses:
+        '200':
+          description: Subscription details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Subscription'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /me/api-keys:
+    get:
+      tags: [Users]
+      summary: List API keys
+      description: Returns the user's API keys (Pro/Enterprise only)
+      operationId: listAPIKeys
+      responses:
+        '200':
+          description: List of API keys
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/APIKey'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/TierRequired'
+
+    post:
+      tags: [Users]
+      summary: Create API key
+      description: |
+        Creates a new API key (Pro/Enterprise only).
+        **Important:** The full key is only returned once in this response. Store it securely.
+      operationId: createAPIKey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/APIKeyCreate'
+      responses:
+        '201':
+          description: API key created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      key:
+                        type: string
+                        description: The full API key (only shown once)
+                        example: qmav_live_abc123xyz456...
+                      name:
+                        type: string
+                      scopes:
+                        type: array
+                        items:
+                          type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      expiresAt:
+                        type: string
+                        format: date-time
+                        nullable: true
+                  warning:
+                    type: string
+                    example: Store this API key securely. It will not be shown again.
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/TierRequired'
+
+  /me/api-keys/{keyId}:
+    patch:
+      tags: [Users]
+      summary: Update API key
+      description: Updates an API key's name or scopes
+      operationId: updateAPIKey
+      parameters:
+        - name: keyId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                scopes:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: API key updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/APIKey'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/TierRequired'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Users]
+      summary: Revoke API key
+      description: Revokes an API key (cannot be undone)
+      operationId: revokeAPIKey
+      parameters:
+        - name: keyId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: API key revoked
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/TierRequired'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /webhooks:
+    get:
+      tags: [Webhooks]
+      summary: List webhook endpoints
+      description: Returns the user's webhook endpoints (Enterprise only)
+      operationId: listWebhooks
+      responses:
+        '200':
+          description: List of webhook endpoints
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WebhookEndpoint'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/TierRequired'
+
+    post:
+      tags: [Webhooks]
+      summary: Create webhook endpoint
+      description: |
+        Creates a new webhook endpoint (Enterprise only).
+        If no secret is provided, one will be generated and returned.
+      operationId: createWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookCreate'
+      responses:
+        '201':
+          description: Webhook created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/WebhookEndpoint'
+                      - type: object
+                        properties:
+                          secret:
+                            type: string
+                            description: The webhook secret (only shown once if generated)
+                  warning:
+                    type: string
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/TierRequired'
+
+  /webhooks/{webhookId}:
+    get:
+      tags: [Webhooks]
+      summary: Get webhook endpoint
+      description: Returns a webhook endpoint's details
+      operationId: getWebhook
+      parameters:
+        - $ref: '#/components/parameters/WebhookId'
+      responses:
+        '200':
+          description: Webhook details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WebhookEndpoint'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/TierRequired'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags: [Webhooks]
+      summary: Update webhook endpoint
+      description: Updates a webhook endpoint
+      operationId: updateWebhook
+      parameters:
+        - $ref: '#/components/parameters/WebhookId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookUpdate'
+      responses:
+        '200':
+          description: Webhook updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WebhookEndpoint'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/TierRequired'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Webhooks]
+      summary: Delete webhook endpoint
+      description: Deletes a webhook endpoint
+      operationId: deleteWebhook
+      parameters:
+        - $ref: '#/components/parameters/WebhookId'
+      responses:
+        '204':
+          description: Webhook deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/TierRequired'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /webhooks/{webhookId}/deliveries:
+    get:
+      tags: [Webhooks]
+      summary: List webhook deliveries
+      description: Returns recent delivery attempts for a webhook
+      operationId: listWebhookDeliveries
+      parameters:
+        - $ref: '#/components/parameters/WebhookId'
+      responses:
+        '200':
+          description: List of deliveries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WebhookDelivery'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/TierRequired'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /webhooks/{webhookId}/test:
+    post:
+      tags: [Webhooks]
+      summary: Send test webhook
+      description: Sends a test webhook to verify the endpoint is working
+      operationId: testWebhook
+      parameters:
+        - $ref: '#/components/parameters/WebhookId'
+      responses:
+        '200':
+          description: Test result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                      statusCode:
+                        type: integer
+                        nullable: true
+                      message:
+                        type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/TierRequired'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Supabase JWT token
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: QuoteMyAV API key (Pro/Enterprise only)
+
+  parameters:
+    QuoteId:
+      name: quoteId
+      in: path
+      required: true
+      description: Quote ID
+      schema:
+        type: string
+        example: QM-abc123
+
+    ItemId:
+      name: itemId
+      in: path
+      required: true
+      description: Line item ID
+      schema:
+        type: string
+
+    VersionId:
+      name: versionId
+      in: path
+      required: true
+      description: Version ID
+      schema:
+        type: string
+
+    WebhookId:
+      name: webhookId
+      in: path
+      required: true
+      description: Webhook endpoint ID
+      schema:
+        type: string
+
+  schemas:
+    QuoteStatus:
+      type: string
+      enum:
+        - draft
+        - pending_review
+        - approved
+        - sent
+        - accepted
+        - rejected
+        - expired
+        - revision_requested
+      description: |
+        Quote status:
+        - `draft`: Initial state, can be edited
+        - `pending_review`: Awaiting internal approval
+        - `approved`: Approved, ready to send
+        - `sent`: Sent to client
+        - `accepted`: Client accepted
+        - `rejected`: Client rejected
+        - `expired`: Quote expired (30 days after sent)
+        - `revision_requested`: Client requested changes
+
+    LineItemCategory:
+      type: string
+      enum:
+        - audio
+        - video
+        - lighting
+        - staging
+        - rigging
+        - power
+        - labor
+        - transport
+        - misc
+        - rental
+        - purchase
+        - service
+
+    Quote:
+      type: object
+      properties:
+        id:
+          type: string
+          example: QM-abc123
+        clientName:
+          type: string
+        clientEmail:
+          type: string
+          format: email
+        eventName:
+          type: string
+        eventDate:
+          type: string
+        venue:
+          type: string
+        status:
+          $ref: '#/components/schemas/QuoteStatus'
+        totalAmount:
+          type: number
+          format: float
+        lineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    QuoteSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        clientName:
+          type: string
+        eventName:
+          type: string
+        eventDate:
+          type: string
+        status:
+          $ref: '#/components/schemas/QuoteStatus'
+        totalAmount:
+          type: number
+        itemCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    QuoteCreate:
+      type: object
+      required:
+        - clientName
+        - clientEmail
+        - eventName
+        - eventDate
+        - venue
+      properties:
+        clientName:
+          type: string
+          minLength: 1
+          maxLength: 200
+        clientEmail:
+          type: string
+          format: email
+        eventName:
+          type: string
+          minLength: 1
+          maxLength: 200
+        eventDate:
+          type: string
+          description: Event date (any format, stored as string)
+        venue:
+          type: string
+          minLength: 1
+          maxLength: 500
+        lineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItemCreate'
+
+    QuoteUpdate:
+      type: object
+      properties:
+        clientName:
+          type: string
+        clientEmail:
+          type: string
+          format: email
+        eventName:
+          type: string
+        eventDate:
+          type: string
+        venue:
+          type: string
+        status:
+          $ref: '#/components/schemas/QuoteStatus'
+        lineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItemCreate'
+
+    LineItem:
+      type: object
+      properties:
+        id:
+          type: string
+        category:
+          $ref: '#/components/schemas/LineItemCategory'
+        description:
+          type: string
+        quantity:
+          type: integer
+        unitPrice:
+          type: number
+        totalPrice:
+          type: number
+        notes:
+          type: string
+
+    LineItemCreate:
+      type: object
+      required:
+        - category
+        - description
+        - quantity
+        - unitPrice
+      properties:
+        category:
+          $ref: '#/components/schemas/LineItemCategory'
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+        quantity:
+          type: integer
+          minimum: 1
+        unitPrice:
+          type: number
+          minimum: 0
+        notes:
+          type: string
+          maxLength: 1000
+
+    LineItemUpdate:
+      type: object
+      properties:
+        category:
+          $ref: '#/components/schemas/LineItemCategory'
+        description:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+        unitPrice:
+          type: number
+          minimum: 0
+        notes:
+          type: string
+
+    QuoteVersion:
+      type: object
+      properties:
+        id:
+          type: string
+        quoteId:
+          type: string
+        versionNumber:
+          type: integer
+        trigger:
+          type: string
+          enum: [auto, manual]
+        description:
+          type: string
+        changeType:
+          type: string
+          enum:
+            - created
+            - items_added
+            - items_removed
+            - items_modified
+            - status_changed
+            - ai_edit_applied
+            - manual_snapshot
+        snapshot:
+          $ref: '#/components/schemas/Quote'
+        createdAt:
+          type: string
+          format: date-time
+
+    VersionDiff:
+      type: object
+      properties:
+        versionA:
+          $ref: '#/components/schemas/QuoteVersion'
+        versionB:
+          $ref: '#/components/schemas/QuoteVersion'
+        changes:
+          type: object
+          properties:
+            itemsAdded:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItem'
+            itemsRemoved:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItem'
+            itemsModified:
+              type: array
+              items:
+                type: object
+                properties:
+                  itemId:
+                    type: string
+                  before:
+                    $ref: '#/components/schemas/LineItem'
+                  after:
+                    $ref: '#/components/schemas/LineItem'
+            amountDiff:
+              type: number
+
+    AIGenerateRequest:
+      type: object
+      required:
+        - eventDetails
+        - equipment
+      properties:
+        eventDetails:
+          type: object
+          required:
+            - eventName
+            - eventType
+          properties:
+            eventName:
+              type: string
+            eventType:
+              type: string
+              enum:
+                - corporate
+                - concert
+                - festival
+                - wedding
+                - conference
+                - theater
+                - broadcast
+                - trade_show
+                - other
+            venueSize:
+              type: string
+              enum: [small, medium, large, outdoor]
+            venueName:
+              type: string
+            dates:
+              type: array
+              items:
+                type: string
+        equipment:
+          type: object
+          properties:
+            categories:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItemCategory'
+            budgetRange:
+              type: object
+              properties:
+                min:
+                  type: number
+                max:
+                  type: number
+            specificRequests:
+              type: string
+
+    AIEditRequest:
+      type: object
+      required:
+        - quoteId
+      properties:
+        quoteId:
+          type: string
+        command:
+          type: string
+          description: Natural language command (e.g., "reduce costs by 20%")
+          maxLength: 1000
+        quickAction:
+          type: string
+          enum:
+            - hit_budget
+            - premium_version
+            - simplify_rigging
+            - add_backup_equipment
+            - optimize_labor
+            - reduce_transport
+        targetBudget:
+          type: number
+          description: Target budget for hit_budget action
+
+    AIJob:
+      type: object
+      properties:
+        jobId:
+          type: string
+        type:
+          type: string
+          enum: [generate, edit]
+        status:
+          type: string
+          enum: [processing, completed, failed]
+        result:
+          type: object
+          nullable: true
+          properties:
+            lineItems:
+              type: array
+              items:
+                $ref: '#/components/schemas/LineItem'
+            totalAmount:
+              type: number
+            summary:
+              type: string
+        error:
+          type: object
+          nullable: true
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        fullName:
+          type: string
+        company:
+          type: string
+        tier:
+          type: string
+          enum: [free, starter, pro, enterprise]
+        createdAt:
+          type: string
+          format: date-time
+
+    Subscription:
+      type: object
+      properties:
+        plan:
+          type: string
+          enum: [free, starter, pro, enterprise]
+        quotesUsed:
+          type: integer
+        quotesLimit:
+          type: integer
+          nullable: true
+          description: null for unlimited
+        quotesRemaining:
+          type: integer
+          nullable: true
+        apiCallsToday:
+          type: integer
+        apiCallsLimit:
+          type: integer
+        currentPeriodStart:
+          type: string
+          format: date-time
+        currentPeriodEnd:
+          type: string
+          format: date-time
+        stripeCustomerId:
+          type: string
+          nullable: true
+
+    APIKey:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        keyPrefix:
+          type: string
+          description: Masked key for identification
+          example: qmav_****_abc12345
+        scopes:
+          type: array
+          items:
+            type: string
+        lastUsedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+        isActive:
+          type: boolean
+
+    APIKeyCreate:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        scopes:
+          type: array
+          items:
+            type: string
+            enum:
+              - '*'
+              - quotes:read
+              - quotes:write
+              - ai:generate
+              - ai:edit
+          default: ['*']
+        expiresInDays:
+          type: integer
+          minimum: 1
+          maximum: 365
+          description: Number of days until expiration (optional)
+
+    WebhookEndpoint:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        lastDeliveryAt:
+          type: string
+          format: date-time
+          nullable: true
+        failureCount:
+          type: integer
+
+    WebhookEventType:
+      type: string
+      enum:
+        - quote.created
+        - quote.updated
+        - quote.sent
+        - quote.viewed
+        - quote.accepted
+        - quote.rejected
+        - quote.expired
+        - ai.job.completed
+        - ai.job.failed
+
+    WebhookCreate:
+      type: object
+      required:
+        - url
+        - events
+      properties:
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+          minItems: 1
+        secret:
+          type: string
+          minLength: 16
+          description: Optional custom secret (one will be generated if not provided)
+
+    WebhookUpdate:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookEventType'
+        isActive:
+          type: boolean
+
+    WebhookDelivery:
+      type: object
+      properties:
+        id:
+          type: string
+        eventType:
+          $ref: '#/components/schemas/WebhookEventType'
+        status:
+          type: string
+          enum: [pending, delivered, failed]
+        responseCode:
+          type: integer
+          nullable: true
+        attempts:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        deliveredAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of items
+        limit:
+          type: integer
+          description: Items per page
+        offset:
+          type: integer
+          description: Current offset
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code
+            message:
+              type: string
+              description: Human-readable error message
+            details:
+              type: object
+              description: Additional error context
+            requestId:
+              type: string
+              description: Request ID for debugging
+
+  responses:
+    Unauthorized:
+      description: Authentication required or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: AUTH_REQUIRED
+              message: Authentication required
+              requestId: req_abc123
+
+    ValidationError:
+      description: Request validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: VALIDATION_ERROR
+              message: Invalid request body
+              details:
+                field: clientEmail
+                issue: Invalid email format
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: QUOTE_NOT_FOUND
+              message: Quote not found
+              details:
+                quoteId: QM-xyz789
+
+    QuotaExceeded:
+      description: Monthly quote quota exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: QUOTA_EXCEEDED
+              message: Monthly quote limit reached
+              details:
+                current: 25
+                limit: 25
+                resetDate: '2024-02-01T00:00:00Z'
+
+    RateLimited:
+      description: Rate limit exceeded
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+        Retry-After:
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: RATE_LIMITED
+              message: API rate limit exceeded
+              details:
+                limit: 100
+                resetAt: 1702540800
+
+    QuoteReadOnly:
+      description: Quote cannot be modified in current status
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: QUOTE_READONLY
+              message: Quote cannot be modified
+              details:
+                status: sent
+                reason: Quotes with status 'sent' cannot be modified
+
+    TierRequired:
+      description: Higher subscription tier required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: TIER_REQUIRED
+              message: This feature requires Pro or Enterprise tier
+              details:
+                currentTier: starter
+                requiredTiers:
+                  - pro
+                  - enterprise

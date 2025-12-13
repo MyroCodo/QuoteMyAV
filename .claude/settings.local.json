@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run dev:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(curl:*)",
+      "Bash(npx playwright --version)",
+      "Bash(node scripts/setup-n8n.js:*)",
+      "Bash(node scripts/setup-n8n.cjs:*)",
+      "Bash(node:*)",
+      "Bash(pkill:*)",
+      "Bash(npm ls:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(npm run build:*)",
+      "Bash(timeout 5 npm run dev)",
+      "WebFetch(domain:fonts.google.com)",
+      "WebSearch",
+      "Bash(start \"\" \"D:\\Projects\\QuoteMyAV\\docs\\design\\font-comparison.html\")",
+      "Bash(npx vite build:*)"
+    ]
+  }
+}

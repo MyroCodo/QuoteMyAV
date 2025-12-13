@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuoteMyAV Font Comparison</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0F172A;
+      color: #F8FAFC;
+      padding: 40px;
+      min-height: 100vh;
+    }
+    h1 {
+      font-family: system-ui;
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #14B8A6;
+    }
+    .subtitle {
+      font-family: system-ui;
+      color: #94A3B8;
+      margin-bottom: 40px;
+    }
+    .font-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    .font-card:hover {
+      border-color: #14B8A6;
+    }
+    .font-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #334155;
+    }
+    .font-name {
+      font-family: system-ui;
+      font-size: 14px;
+      font-weight: 600;
+      color: #14B8A6;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .font-tag {
+      font-family: system-ui;
+      font-size: 12px;
+      background: #14B8A6;
+      color: #0F172A;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .sample-row {
+      margin-bottom: 20px;
+    }
+    .sample-label {
+      font-family: system-ui;
+      font-size: 11px;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .brand-name {
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #14B8A6, #10B981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .tagline {
+      font-size: 20px;
+      font-weight: 500;
+      color: #CBD5E1;
+    }
+    .body-text {
+      font-size: 16px;
+      line-height: 1.7;
+      color: #94A3B8;
+      max-width: 600px;
+    }
+    .alphabet {
+      font-size: 18px;
+      color: #64748B;
+      letter-spacing: 2px;
+    }
+    .numbers {
+      font-size: 32px;
+      font-weight: 600;
+      color: #F8FAFC;
+      font-variant-numeric: tabular-nums;
+    }
+    .ui-sample {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .ui-button {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .ui-button.primary {
+      background: linear-gradient(135deg, #14B8A6, #0D9488);
+      color: white;
+    }
+    .ui-button.secondary {
+      background: #334155;
+      color: #F8FAFC;
+    }
+    .description {
+      font-family: system-ui;
+      font-size: 14px;
+      color: #64748B;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #334155;
+      line-height: 1.6;
+    }
+    .description strong {
+      color: #F8FAFC;
+    }
+
+    /* Font families */
+    .font-inter { font-family: 'Inter', sans-serif; }
+    .font-space { font-family: 'Space Grotesk', sans-serif; }
+    .font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-outfit { font-family: 'Outfit', sans-serif; }
+  </style>
+</head>
+<body>
+  <h1>QuoteMyAV Font Comparison</h1>
+  <p class="subtitle">Open this file in your browser to see the fonts rendered. Pick your favorite!</p>
+
+  <!-- Inter -->
+  <div class="font-card">
+    <div class="font-header">
+      <span class="font-name">Inter</span>
+      <span class="font-tag">Safe Choice</span>
+    </div>
+    <div class="font-inter">
+      <div class="sample-row">
+        <div class="sample-label">Brand Name</div>
+        <div class="brand-name">QuoteMyAV</div>
+        <div class="tagline">AI-Powered AV Quotes in Minutes</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">Body Text</div>
+        <div class="body-text">Generate professional quotes in seconds, not hours. Claude AI understands AV equipment and creates accurate pricing based on your event requirements.</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">Numbers (Pricing)</div>
+        <div class="numbers">$12,450.00 | $3,200.00 | $875.00</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">Alphabet</div>
+        <div class="alphabet">AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">UI Elements</div>
+        <div class="ui-sample">
+          <span class="ui-button primary">Generate Quote</span>
+          <span class="ui-button secondary">Export PDF</span>
+        </div>
+      </div>
+    </div>
+    <div class="description">
+      <strong>Vibe:</strong> Professional, neutral, "just works" <br>
+      <strong>Used by:</strong> GitHub, Figma, Linear, Vercel <br>
+      <strong>Best for:</strong> Safe choice if you want something proven
+    </div>
+  </div>
+
+  <!-- Space Grotesk -->
+  <div class="font-card">
+    <div class="font-header">
+      <span class="font-name">Space Grotesk</span>
+      <span class="font-tag">Recommended</span>
+    </div>
+    <div class="font-space">
+      <div class="sample-row">
+        <div class="sample-label">Brand Name</div>
+        <div class="brand-name">QuoteMyAV</div>
+        <div class="tagline">AI-Powered AV Quotes in Minutes</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">Body Text</div>
+        <div class="body-text">Generate professional quotes in seconds, not hours. Claude AI understands AV equipment and creates accurate pricing based on your event requirements.</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">Numbers (Pricing)</div>
+        <div class="numbers">$12,450.00 | $3,200.00 | $875.00</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">Alphabet</div>
+        <div class="alphabet">AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">UI Elements</div>
+        <div class="ui-sample">
+          <span class="ui-button primary">Generate Quote</span>
+          <span class="ui-button secondary">Export PDF</span>
+        </div>
+      </div>
+    </div>
+    <div class="description">
+      <strong>Vibe:</strong> Tech-forward, futuristic, slightly playful <br>
+      <strong>Used by:</strong> Tech startups, creative studios <br>
+      <strong>Best for:</strong> AI/tech brands that want personality without being unprofessional
+    </div>
+  </div>
+
+  <!-- Plus Jakarta Sans -->
+  <div class="font-card">
+    <div class="font-header">
+      <span class="font-name">Plus Jakarta Sans</span>
+      <span class="font-tag">Modern SaaS</span>
+    </div>
+    <div class="font-jakarta">
+      <div class="sample-row">
+        <div class="sample-label">Brand Name</div>
+        <div class="brand-name">QuoteMyAV</div>
+        <div class="tagline">AI-Powered AV Quotes in Minutes</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">Body Text</div>
+        <div class="body-text">Generate professional quotes in seconds, not hours. Claude AI understands AV equipment and creates accurate pricing based on your event requirements.</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">Numbers (Pricing)</div>
+        <div class="numbers">$12,450.00 | $3,200.00 | $875.00</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">Alphabet</div>
+        <div class="alphabet">AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">UI Elements</div>
+        <div class="ui-sample">
+          <span class="ui-button primary">Generate Quote</span>
+          <span class="ui-button secondary">Export PDF</span>
+        </div>
+      </div>
+    </div>
+    <div class="description">
+      <strong>Vibe:</strong> Clean, confident, fresh, geometric <br>
+      <strong>Used by:</strong> Modern SaaS startups, mobile apps <br>
+      <strong>Best for:</strong> Brands wanting that "2024-25 startup" look
+    </div>
+  </div>
+
+  <!-- Outfit -->
+  <div class="font-card">
+    <div class="font-header">
+      <span class="font-name">Outfit</span>
+      <span class="font-tag">Friendly</span>
+    </div>
+    <div class="font-outfit">
+      <div class="sample-row">
+        <div class="sample-label">Brand Name</div>
+        <div class="brand-name">QuoteMyAV</div>
+        <div class="tagline">AI-Powered AV Quotes in Minutes</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">Body Text</div>
+        <div class="body-text">Generate professional quotes in seconds, not hours. Claude AI understands AV equipment and creates accurate pricing based on your event requirements.</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">Numbers (Pricing)</div>
+        <div class="numbers">$12,450.00 | $3,200.00 | $875.00</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">Alphabet</div>
+        <div class="alphabet">AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz</div>
+      </div>
+      <div class="sample-row">
+        <div class="sample-label">UI Elements</div>
+        <div class="ui-sample">
+          <span class="ui-button primary">Generate Quote</span>
+          <span class="ui-button secondary">Export PDF</span>
+        </div>
+      </div>
+    </div>
+    <div class="description">
+      <strong>Vibe:</strong> Approachable, warm, rounded, contemporary <br>
+      <strong>Used by:</strong> Consumer apps, friendly B2B <br>
+      <strong>Best for:</strong> Brands wanting approachable but professional
+    </div>
+  </div>
+
+</body>
+</html>

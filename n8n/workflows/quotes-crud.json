@@ -1,0 +1,336 @@
+{
+  "name": "QuoteMyAV - Quotes CRUD",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "quotes",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "create-webhook",
+      "name": "Create Quote Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const body = items[0].json.body || items[0].json;\nconst quoteId = 'QM-' + Date.now();\nconst now = new Date().toISOString();\n\nconst quote = {\n  ...body,\n  id: quoteId,\n  createdAt: now,\n  updatedAt: now\n};\n\nreturn [{ json: { quote, quoteId, bucket: 'quotemyav-data' } }];"
+      },
+      "id": "create-set-id",
+      "name": "Generate Quote ID",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "={{ $json.bucket }}",
+        "fileName": "=quotes/{{ $json.quoteId }}.json",
+        "fileContent": "={{ JSON.stringify($json.quote, null, 2) }}"
+      },
+      "id": "create-s3-put",
+      "name": "S3 Save Quote",
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "credentials": {
+        "aws": {
+          "id": "1",
+          "name": "AWS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const quote = $('Generate Quote ID').first().json.quote;\nreturn [{ json: { success: true, quote } }];"
+      },
+      "id": "create-response",
+      "name": "Create Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "quotes",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "list-webhook",
+      "name": "List Quotes Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 500]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "bucketName": "quotemyav-data",
+        "prefix": "quotes/",
+        "returnAll": true
+      },
+      "id": "list-s3-list",
+      "name": "S3 List Quotes",
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 1,
+      "position": [450, 500],
+      "credentials": {
+        "aws": {
+          "id": "1",
+          "name": "AWS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const webhook = $('List Quotes Webhook').first().json;\nconst userId = webhook.query?.userId;\nconst results = [];\n\nfor (const item of items) {\n  if (item.json.Key && item.json.Key.endsWith('.json')) {\n    results.push({ json: { key: item.json.Key, userId } });\n  }\n}\n\n// If no files found, return empty response directly\nif (results.length === 0) {\n  return [{ json: { _empty: true, userId } }];\n}\n\nreturn results;"
+      },
+      "id": "list-filter-keys",
+      "name": "Filter Quote Keys",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 500]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "bucketName": "quotemyav-data",
+        "fileKey": "={{ $json.key }}",
+        "options": {}
+      },
+      "id": "list-s3-get",
+      "name": "S3 Get Each Quote",
+      "executeOnce": false,
+      "onError": "continueRegularOutput",
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 1,
+      "position": [850, 500],
+      "credentials": {
+        "aws": {
+          "id": "1",
+          "name": "AWS"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "functionCode": "const webhook = $('List Quotes Webhook').first().json;\nconst userId = webhook.query?.userId;\n\n// Handle empty bucket case\nif (items[0]?.json?._empty) {\n  return [{ json: { success: true, quotes: [] } }];\n}\n\nconst quotes = items\n  .filter(item => item.json.data)\n  .map(item => {\n    try {\n      return JSON.parse(item.json.data);\n    } catch (e) {\n      return null;\n    }\n  })\n  .filter(quote => quote && (!userId || quote.userId === userId))\n  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));\n\nreturn [{ json: { success: true, quotes } }];"
+      },
+      "id": "list-response",
+      "name": "List Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1050, 500]
+    },
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "quotes/:id",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "get-webhook",
+      "name": "Get Quote Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 700]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "bucketName": "quotemyav-data",
+        "fileKey": "=quotes/{{ $json.params.id }}.json"
+      },
+      "id": "get-s3-get",
+      "name": "S3 Get Quote",
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 1,
+      "position": [450, 700],
+      "credentials": {
+        "aws": {
+          "id": "1",
+          "name": "AWS"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "functionCode": "const data = items[0].json.data;\nif (!data) {\n  return [{ json: { success: false, error: 'Quote not found' } }];\n}\ntry {\n  const quote = JSON.parse(data);\n  return [{ json: { success: true, quote } }];\n} catch (e) {\n  return [{ json: { success: false, error: 'Invalid quote data' } }];\n}"
+      },
+      "id": "get-response",
+      "name": "Get Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 700]
+    },
+    {
+      "parameters": {
+        "httpMethod": "PUT",
+        "path": "quotes/:id",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "update-webhook",
+      "name": "Update Quote Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 900]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "bucketName": "quotemyav-data",
+        "fileKey": "=quotes/{{ $json.params.id }}.json"
+      },
+      "id": "update-s3-get",
+      "name": "S3 Get Existing",
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 1,
+      "position": [450, 900],
+      "credentials": {
+        "aws": {
+          "id": "1",
+          "name": "AWS"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "functionCode": "const webhook = $('Update Quote Webhook').first().json;\nconst existing = items[0].json.data ? JSON.parse(items[0].json.data) : null;\n\nif (!existing) {\n  return [{ json: { success: false, error: 'Quote not found' } }];\n}\n\nconst updates = webhook.body || {};\nconst quote = {\n  ...existing,\n  ...updates,\n  id: existing.id,\n  createdAt: existing.createdAt,\n  updatedAt: new Date().toISOString()\n};\n\nreturn [{ json: { quote, quoteId: existing.id } }];"
+      },
+      "id": "update-merge",
+      "name": "Merge Updates",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 900]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "quotemyav-data",
+        "fileName": "=quotes/{{ $json.quoteId }}.json",
+        "fileContent": "={{ JSON.stringify($json.quote, null, 2) }}"
+      },
+      "id": "update-s3-put",
+      "name": "S3 Update Quote",
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 1,
+      "position": [850, 900],
+      "credentials": {
+        "aws": {
+          "id": "1",
+          "name": "AWS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const quote = $('Merge Updates').first().json.quote;\nif (!quote) {\n  return [{ json: { success: false, error: 'Update failed' } }];\n}\nreturn [{ json: { success: true, quote } }];"
+      },
+      "id": "update-response",
+      "name": "Update Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1050, 900]
+    },
+    {
+      "parameters": {
+        "httpMethod": "DELETE",
+        "path": "quotes/:id",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "delete-webhook",
+      "name": "Delete Quote Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 1100]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "bucketName": "quotemyav-data",
+        "fileKey": "=quotes/{{ $json.params.id }}.json"
+      },
+      "id": "delete-s3-delete",
+      "name": "S3 Delete Quote",
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 1,
+      "position": [450, 1100],
+      "credentials": {
+        "aws": {
+          "id": "1",
+          "name": "AWS"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{ json: { success: true, deleted: true } }];"
+      },
+      "id": "delete-response",
+      "name": "Delete Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 1100]
+    }
+  ],
+  "connections": {
+    "Create Quote Webhook": {
+      "main": [[{ "node": "Generate Quote ID", "type": "main", "index": 0 }]]
+    },
+    "Generate Quote ID": {
+      "main": [[{ "node": "S3 Save Quote", "type": "main", "index": 0 }]]
+    },
+    "S3 Save Quote": {
+      "main": [[{ "node": "Create Response", "type": "main", "index": 0 }]]
+    },
+    "List Quotes Webhook": {
+      "main": [[{ "node": "S3 List Quotes", "type": "main", "index": 0 }]]
+    },
+    "S3 List Quotes": {
+      "main": [[{ "node": "Filter Quote Keys", "type": "main", "index": 0 }]]
+    },
+    "Filter Quote Keys": {
+      "main": [[{ "node": "S3 Get Each Quote", "type": "main", "index": 0 }]]
+    },
+    "S3 Get Each Quote": {
+      "main": [[{ "node": "List Response", "type": "main", "index": 0 }]]
+    },
+    "Get Quote Webhook": {
+      "main": [[{ "node": "S3 Get Quote", "type": "main", "index": 0 }]]
+    },
+    "S3 Get Quote": {
+      "main": [[{ "node": "Get Response", "type": "main", "index": 0 }]]
+    },
+    "Update Quote Webhook": {
+      "main": [[{ "node": "S3 Get Existing", "type": "main", "index": 0 }]]
+    },
+    "S3 Get Existing": {
+      "main": [[{ "node": "Merge Updates", "type": "main", "index": 0 }]]
+    },
+    "Merge Updates": {
+      "main": [[{ "node": "S3 Update Quote", "type": "main", "index": 0 }]]
+    },
+    "S3 Update Quote": {
+      "main": [[{ "node": "Update Response", "type": "main", "index": 0 }]]
+    },
+    "Delete Quote Webhook": {
+      "main": [[{ "node": "S3 Delete Quote", "type": "main", "index": 0 }]]
+    },
+    "S3 Delete Quote": {
+      "main": [[{ "node": "Delete Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
