@@ -1,6 +1,6 @@
 import type { ErrorHandler } from 'hono';
 import { ApiError } from '../lib/errors.js';
-import type { Variables } from '../index.js';
+import type { Variables } from '../../api/index.js';
 
 export const errorHandler: ErrorHandler<{ Variables: Variables }> = (err, c) => {
   const requestId = c.get('requestId') || crypto.randomUUID();

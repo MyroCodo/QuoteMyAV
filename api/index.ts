@@ -4,13 +4,13 @@ import { logger } from 'hono/logger';
 import { prettyJSON } from 'hono/pretty-json';
 import { secureHeaders } from 'hono/secure-headers';
 
-import { errorHandler } from './middleware/errorHandler.js';
-import { authMiddleware } from './middleware/auth.js';
-import { rateLimitMiddleware } from './middleware/rateLimit.js';
-import quotesRouter from './routes/quotes.js';
-import aiRouter from './routes/ai.js';
-import usersRouter from './routes/users.js';
-import webhooksRouter from './routes/webhooks.js';
+import { errorHandler } from '../server/middleware/errorHandler.js';
+import { authMiddleware } from '../server/middleware/auth.js';
+import { rateLimitMiddleware } from '../server/middleware/rateLimit.js';
+import quotesRouter from '../server/routes/quotes.js';
+import aiRouter from '../server/routes/ai.js';
+import usersRouter from '../server/routes/users.js';
+import webhooksRouter from '../server/routes/webhooks.js';
 
 // Types for Hono context
 export type Variables = {

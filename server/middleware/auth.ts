@@ -3,7 +3,7 @@ import { createMiddleware } from 'hono/factory';
 import { verifySecret } from '../lib/crypto.js';
 import { getSupabaseAdmin, getSupabaseAnon } from '../lib/supabase.js';
 import { Errors } from '../lib/errors.js';
-import type { Variables } from '../index.js';
+import type { Variables } from '../../api/index.js';
 import type { SubscriptionTier } from '../lib/types.js';
 
 // API key format: qmav_live_xxx or qmav_test_xxx

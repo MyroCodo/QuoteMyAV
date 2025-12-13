@@ -14,7 +14,7 @@ import {
   VALID_STATUS_TRANSITIONS,
 } from '../lib/validators.js';
 import { quotaCheckMiddleware, incrementQuotaUsage } from '../middleware/quota.js';
-import type { Variables } from '../index.js';
+import type { Variables } from '../../api/index.js';
 
 const router = new Hono<{ Variables: Variables }>();
 

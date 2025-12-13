@@ -6,7 +6,7 @@ import { Errors } from '../lib/errors.js';
 import { aiGenerateSchema, aiEditSchema } from '../lib/validators.js';
 import { aiRateLimitMiddleware } from '../middleware/rateLimit.js';
 import { quotaCheckMiddleware } from '../middleware/quota.js';
-import type { Variables } from '../index.js';
+import type { Variables } from '../../api/index.js';
 
 const router = new Hono<{ Variables: Variables }>();
 

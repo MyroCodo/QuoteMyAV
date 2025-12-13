@@ -2,7 +2,7 @@ import { createMiddleware } from 'hono/factory';
 import { getSupabaseAdmin } from '../lib/supabase.js';
 import { Errors } from '../lib/errors.js';
 import { RATE_LIMITS, type SubscriptionTier } from '../lib/types.js';
-import type { Variables } from '../index.js';
+import type { Variables } from '../../api/index.js';
 
 // In-memory rate limit store (for edge runtime)
 // Note: In a serverless environment, this store is ephemeral per instance

@@ -2,7 +2,7 @@ import { createMiddleware } from 'hono/factory';
 import { getSupabaseAdmin } from '../lib/supabase.js';
 import { Errors } from '../lib/errors.js';
 import { QUOTA_LIMITS, type SubscriptionTier } from '../lib/types.js';
-import type { Variables } from '../index.js';
+import type { Variables } from '../../api/index.js';
 
 interface QuotaStatus {
   used: number;

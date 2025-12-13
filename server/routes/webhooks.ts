@@ -6,7 +6,7 @@ import { getSupabaseAdmin } from '../lib/supabase.js';
 import { Errors } from '../lib/errors.js';
 import { webhookCreateSchema, webhookUpdateSchema } from '../lib/validators.js';
 import { requireTier } from '../middleware/auth.js';
-import type { Variables } from '../index.js';
+import type { Variables } from '../../api/index.js';
 import type { WebhookEventType, WebhookPayload } from '../lib/types.js';
 
 const router = new Hono<{ Variables: Variables }>();

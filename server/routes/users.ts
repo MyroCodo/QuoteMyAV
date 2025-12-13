@@ -7,7 +7,7 @@ import { Errors } from '../lib/errors.js';
 import { apiKeyCreateSchema } from '../lib/validators.js';
 import { getQuotaStatus } from '../middleware/quota.js';
 import { requireTier } from '../middleware/auth.js';
-import type { Variables } from '../index.js';
+import type { Variables } from '../../api/index.js';
 
 const router = new Hono<{ Variables: Variables }>();
 
@@ -18,15 +18,9 @@ router.get('/', async (c) => {
   const admin = getSupabaseAdmin();
 
   // Get user from Supabase auth
-  const { data: { users }, error } = await admin.auth.admin.listUsers();
+  const { data: { user }, error } = await admin.auth.admin.getUserById(userId);
 
-  if (error) {
-    throw Errors.database('fetch user');
-  }
-
-  const user = users.find((u) => u.id === userId);
-
-  if (!user) {
+  if (error || !user) {
     throw Errors.userNotFound(userId);
   }
 
