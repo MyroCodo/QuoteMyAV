@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { Button, Input } from '../components/ui';
 import { isSupabaseConfigured } from '../services/supabase';
@@ -7,6 +8,7 @@ import { isSupabaseConfigured } from '../services/supabase';
 export function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState('');
   const [company, setCompany] = useState('');
   const navigate = useNavigate();
@@ -76,13 +78,23 @@ export function Signup() {
 
       <Input
         label="Password"
-        type="password"
+        type={showPassword ? 'text' : 'password'}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
         placeholder="At least 8 characters"
         helperText="Minimum 8 characters"
         error={password.length > 0 && password.length < 8 ? 'Password must be at least 8 characters' : undefined}
+        suffix={
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="text-slate-400 hover:text-slate-300 transition-colors"
+            tabIndex={-1}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        }
       />
 
       {error && (

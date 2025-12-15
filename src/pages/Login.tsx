@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { Button, Input } from '../components/ui';
 import { isSupabaseConfigured } from '../services/supabase';
@@ -7,6 +8,7 @@ import { isSupabaseConfigured } from '../services/supabase';
 export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { signIn, isLoading, error, clearError, isAuthenticated } = useAuthStore();
@@ -57,11 +59,21 @@ export function Login() {
 
       <Input
         label="Password"
-        type="password"
+        type={showPassword ? 'text' : 'password'}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
         placeholder="Enter your password"
+        suffix={
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="text-slate-400 hover:text-slate-300 transition-colors"
+            tabIndex={-1}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        }
       />
 
       {error && (
