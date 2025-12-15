@@ -91,9 +91,18 @@ export const authService = {
   /**
    * Sign in an existing user
    */
-  async signIn(email: string, password: string): Promise<{ user: User | null; error: Error | null }> {
+  async signIn(email: string, password: string, rememberMe = true): Promise<{ user: User | null; error: Error | null }> {
     if (useCognito) {
       const result = await cognitoAuthService.signIn(email, password);
+
+      // If remember me is false, we'll clear auth on window close
+      if (!rememberMe && result.user) {
+        // Store a flag to indicate session-only auth
+        sessionStorage.setItem('quotemyav_session_only', 'true');
+      } else {
+        sessionStorage.removeItem('quotemyav_session_only');
+      }
+
       return {
         user: mapCognitoUser(result.user),
         error: result.error,
@@ -102,6 +111,13 @@ export const authService = {
 
     if (useSupabase) {
       const result = await supabaseAuthService.signIn(email, password);
+
+      if (!rememberMe && result.user) {
+        sessionStorage.setItem('quotemyav_session_only', 'true');
+      } else {
+        sessionStorage.removeItem('quotemyav_session_only');
+      }
+
       return {
         user: mapSupabaseUser(result.user),
         error: result.error,
@@ -116,7 +132,14 @@ export const authService = {
       tier: 'free',
       createdAt: new Date().toISOString(),
     };
-    localStorage.setItem('demo-user', JSON.stringify(demoUser));
+
+    if (rememberMe) {
+      localStorage.setItem('demo-user', JSON.stringify(demoUser));
+    } else {
+      sessionStorage.setItem('demo-user', JSON.stringify(demoUser));
+      sessionStorage.setItem('quotemyav_session_only', 'true');
+    }
+
     return { user: demoUser, error: null };
   },
 
@@ -141,8 +164,25 @@ export const authService = {
    * Get current user
    */
   async getUser(): Promise<{ user: User | null; error: Error | null }> {
+    // Check if this is a session-only auth (not remembered)
+    const isSessionOnly = sessionStorage.getItem('quotemyav_session_only') === 'true';
+
     if (useCognito) {
       const result = await cognitoAuthService.getUser();
+
+      // If session-only and we're checking after a potential page reload,
+      // the sessionStorage flag would be gone, so clear the auth
+      if (!isSessionOnly && !sessionStorage.getItem('quotemyav_session_only')) {
+        // Check if there's stored auth but no session flag
+        // This could mean the browser was closed and reopened
+        const hasStoredTokens = localStorage.getItem('quotemyav_auth_tokens');
+        if (hasStoredTokens && !localStorage.getItem('rememberMe')) {
+          // Clear auth since remember me was not checked
+          await this.signOut();
+          return { user: null, error: null };
+        }
+      }
+
       return {
         user: mapCognitoUser(result.user),
         error: result.error,
@@ -151,6 +191,15 @@ export const authService = {
 
     if (useSupabase) {
       const result = await supabaseAuthService.getUser();
+
+      if (!isSessionOnly && !sessionStorage.getItem('quotemyav_session_only')) {
+        const hasStoredAuth = localStorage.getItem('supabase.auth.token');
+        if (hasStoredAuth && !localStorage.getItem('rememberMe')) {
+          await this.signOut();
+          return { user: null, error: null };
+        }
+      }
+
       return {
         user: mapSupabaseUser(result.user),
         error: result.error,
@@ -159,7 +208,19 @@ export const authService = {
 
     // Demo mode
     try {
-      const stored = localStorage.getItem('demo-user');
+      // Try sessionStorage first (for non-remembered sessions)
+      let stored = sessionStorage.getItem('demo-user');
+      if (!stored) {
+        // Then try localStorage (for remembered sessions)
+        stored = localStorage.getItem('demo-user');
+
+        // If found in localStorage but remember me was not set, clear it
+        if (stored && localStorage.getItem('rememberMe') !== 'true') {
+          localStorage.removeItem('demo-user');
+          return { user: null, error: null };
+        }
+      }
+
       const user = stored ? JSON.parse(stored) : null;
       return { user, error: null };
     } catch {

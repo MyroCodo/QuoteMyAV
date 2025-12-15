@@ -2,19 +2,26 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
-import { Button, Input } from '../components/ui';
+import { Button, Input, Checkbox } from '../components/ui';
 import { isSupabaseConfigured } from '../services/supabase';
 
 export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { signIn, isLoading, error, clearError, isAuthenticated } = useAuthStore();
 
   // Get the redirect path from location state
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';
+
+  // Load rememberMe preference on mount
+  useEffect(() => {
+    const remembered = localStorage.getItem('rememberMe') === 'true';
+    setRememberMe(remembered);
+  }, []);
 
   // Clear error when component mounts or inputs change
   useEffect(() => {
@@ -31,7 +38,14 @@ export function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const result = await signIn(email, password);
+    // Store rememberMe preference
+    if (rememberMe) {
+      localStorage.setItem('rememberMe', 'true');
+    } else {
+      localStorage.removeItem('rememberMe');
+    }
+
+    const result = await signIn(email, password, rememberMe);
 
     if (result.success) {
       navigate(from, { replace: true });
@@ -74,6 +88,14 @@ export function Login() {
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
         }
+      />
+
+      <Checkbox
+        id="rememberMe"
+        checked={rememberMe}
+        onChange={(e) => setRememberMe(e.target.checked)}
+        label="Remember me"
+        helperText="Stay signed in for 30 days"
       />
 
       {error && (
