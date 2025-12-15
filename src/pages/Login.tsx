@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Clock } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { Button, Input, Checkbox } from '../components/ui';
 import { isSupabaseConfigured } from '../services/supabase';
+
+const isAuthDisabled = import.meta.env.VITE_AUTH_DISABLED === 'true';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -51,6 +53,32 @@ export function Login() {
       navigate(from, { replace: true });
     }
   };
+
+  if (isAuthDisabled) {
+    return (
+      <div className="text-center space-y-6">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-teal-500/10 mb-2">
+          <Clock className="w-8 h-8 text-teal-400" />
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-2">Coming Soon</h2>
+          <p className="text-slate-400">
+            We're putting the finishing touches on QuoteMyAV.
+            <br />
+            Check back soon to create your account!
+          </p>
+        </div>
+        <div className="pt-4">
+          <Link
+            to="/"
+            className="text-teal-400 font-medium hover:text-teal-300 transition-colors"
+          >
+            &larr; Back to home
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">

@@ -135,6 +135,7 @@ jobs:
         env:
           VITE_APP_URL: https://quotemyav.com
           VITE_API_URL: https://quotemyav.com/v1
+          VITE_AUTH_DISABLED: ${{ vars.AUTH_DISABLED || 'true' }}
 
       - name: Build Lambda
         run: npm run build:lambda
