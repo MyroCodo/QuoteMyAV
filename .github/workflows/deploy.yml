@@ -2,9 +2,9 @@ name: Deploy QuoteMyAV
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 env:
   AWS_REGION: us-east-1
@@ -39,10 +39,10 @@ jobs:
       - name: Build Lambda
         run: npm run build:lambda
 
-  # Deploy to staging on PRs
+  # Deploy to dev/staging on develop branch or PRs
   deploy-staging:
     needs: test
-    if: github.event_name == 'pull_request'
+    if: github.ref == 'refs/heads/develop' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     environment: staging
     permissions:
