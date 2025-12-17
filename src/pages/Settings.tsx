@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, Button, Badge } from '../components/ui';
+import { ProfilePictureUpload } from '../components/profile/ProfilePictureUpload';
 import { useAuthStore } from '../stores/authStore';
 import { useSubscriptionStore } from '../stores/subscriptionStore';
 import { stripeService, isStripeConfigured } from '../services/stripe';
+import { profileService } from '../services/profile';
 import { PLAN_DETAILS } from '../types';
 import type { SubscriptionPlan } from '../types';
 
 export function Settings() {
-  const { user } = useAuthStore();
+  const navigate = useNavigate();
+  const { user, updateProfilePicture } = useAuthStore();
   const {
     subscription,
     initialize,
@@ -60,11 +63,14 @@ export function Settings() {
 
     setIsUpgrading(true);
     try {
-      if (!isStripeConfigured) {
-        // Demo mode - change plan directly
-        upgradePlan(plan);
-      } else {
-        // In production, this would go through Stripe
+      // For upgrades, always redirect to checkout page for confirmation
+      if (!isDowngrade) {
+        navigate(`/checkout?plan=${plan}`);
+        return;
+      }
+
+      // For downgrades in production, go through Stripe
+      if (isStripeConfigured) {
         const result = await stripeService.createCheckoutSession(
           user.id,
           plan,
@@ -75,6 +81,9 @@ export function Settings() {
         if (result.success && result.url) {
           window.location.href = result.url;
         }
+      } else {
+        // Demo mode downgrade - apply directly (already confirmed above)
+        upgradePlan(plan);
       }
     } catch (err) {
       console.error('Plan change error:', err);
@@ -101,9 +110,65 @@ export function Settings() {
     }
   };
 
+  // Check if API is available (not in demo mode)
+  const isApiAvailable = Boolean(import.meta.env.VITE_API_URL);
+
+  // Handle profile picture upload
+  const handleProfilePictureUpload = async (file: File) => {
+    try {
+      // In demo mode, use data URL (stored locally)
+      if (!isApiAvailable) {
+        const reader = new FileReader();
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        updateProfilePicture(dataUrl);
+        return;
+      }
+
+      // Production mode: upload to S3
+      const imageUrl = await profileService.uploadProfilePicture(file);
+      updateProfilePicture(imageUrl);
+    } catch (err) {
+      console.error('Profile picture upload error:', err);
+      throw err;
+    }
+  };
+
+  // Handle profile picture removal
+  const handleProfilePictureRemove = async () => {
+    try {
+      // In demo mode, just clear locally
+      if (!isApiAvailable) {
+        updateProfilePicture('');
+        return;
+      }
+
+      // Production mode: update backend
+      await profileService.removeProfilePicture();
+      updateProfilePicture('');
+    } catch (err) {
+      console.error('Profile picture remove error:', err);
+      throw err;
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold text-white mb-8">Settings</h1>
+
+      {/* Profile Picture Section */}
+      <Card className="mb-6">
+        <h2 className="text-lg font-semibold text-white mb-6">Profile Picture</h2>
+        <ProfilePictureUpload
+          currentImageUrl={user?.profilePictureUrl}
+          userName={user?.fullName || 'User'}
+          onUpload={handleProfilePictureUpload}
+          onRemove={user?.profilePictureUrl ? handleProfilePictureRemove : undefined}
+        />
+      </Card>
 
       {/* Account Section */}
       <Card className="mb-6">

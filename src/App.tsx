@@ -11,7 +11,12 @@ import { Signup } from './pages/Signup';
 import { QuoteBuilder } from './pages/QuoteBuilder';
 import { QuoteDetail } from './pages/QuoteDetail';
 import { Settings } from './pages/Settings';
+import { Checkout } from './pages/Checkout';
+import { Plans } from './pages/Plans';
+import { Privacy } from './pages/Privacy';
+import { Terms } from './pages/Terms';
 import { useAuthStore } from './stores/authStore';
+import { ChatWidget } from './components/ChatWidget';
 
 function App() {
   const initialize = useAuthStore((state) => state.initialize);
@@ -26,12 +31,18 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Landing />} />
+        <Route path="/checkout" element={<Checkout />} />
 
         {/* Auth routes */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
         </Route>
+
+        {/* Public info pages */}
+        <Route path="/plans" element={<Plans />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
 
         {/* Protected routes */}
         <Route
@@ -49,6 +60,9 @@ function App() {
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
+
+      {/* Global Chat Widget - Available on all pages */}
+      <ChatWidget />
     </BrowserRouter>
   );
 }

@@ -15,7 +15,7 @@ export class VpcStack extends cdk.Stack {
     // Create VPC with public and private subnets
     this.vpc = new ec2.Vpc(this, 'QuoteMyAVVpc', {
       vpcName: `quotemyav-${props.isProd ? 'prod' : 'dev'}`,
-      maxAzs: props.isProd ? 2 : 1, // 2 AZs for prod (Multi-AZ RDS), 1 for dev
+      maxAzs: 2, // RDS requires at least 2 AZs even for dev
       natGateways: props.isProd ? 1 : 0, // NAT Gateway for Lambda in private subnet
       subnetConfiguration: [
         {
@@ -37,11 +37,21 @@ export class VpcStack extends cdk.Stack {
     // Secrets Manager endpoint for Lambda to fetch secrets
     this.vpc.addInterfaceEndpoint('SecretsManagerEndpoint', {
       service: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
+      subnets: {
+        subnetType: props.isProd
+          ? ec2.SubnetType.PRIVATE_WITH_EGRESS
+          : ec2.SubnetType.PRIVATE_ISOLATED,
+      },
     });
 
     // SSM Parameter Store endpoint
     this.vpc.addInterfaceEndpoint('SSMEndpoint', {
       service: ec2.InterfaceVpcEndpointAwsService.SSM,
+      subnets: {
+        subnetType: props.isProd
+          ? ec2.SubnetType.PRIVATE_WITH_EGRESS
+          : ec2.SubnetType.PRIVATE_ISOLATED,
+      },
     });
 
     // S3 Gateway endpoint (free)

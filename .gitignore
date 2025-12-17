@@ -29,3 +29,11 @@ dist-ssr
 *.sw?
 SESSION-NOTES.md
 .env.production
+
+# CDK output
+infra/cdk.out/
+
+# Temporary files
+nul
+*.bak
+*.tmp

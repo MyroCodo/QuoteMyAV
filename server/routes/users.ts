@@ -1,6 +1,8 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
 import { nanoid } from 'nanoid';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { hashSecret } from '../lib/crypto.js';
 import { query, queryOne, queryAll } from '../lib/database.js';
 import { getUserById, isCognitoConfigured } from '../lib/cognito.js';
@@ -11,6 +13,15 @@ import { requireTier } from '../middleware/auth.js';
 import type { Variables } from '../../api/index.js';
 
 const router = new Hono<{ Variables: Variables }>();
+
+// S3 client configuration
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION || 'us-east-1',
+});
+
+// S3 bucket configuration
+const PROFILE_PICTURES_BUCKET = process.env.PROFILE_PICTURES_BUCKET || 'quotemyav-profile-pictures';
+const CLOUDFRONT_DOMAIN = process.env.CLOUDFRONT_DOMAIN || '';
 
 // Fallback to Supabase during migration (optional)
 let supabaseAvailable = false;
@@ -61,6 +72,18 @@ router.get('/', async (c) => {
   const userId = c.get('userId');
   const userTier = c.get('userTier');
 
+  // Get profile picture URL from database
+  let profilePictureUrl: string | null = null;
+  try {
+    const userRow = await queryOne<{ profile_picture_url: string | null }>(
+      `SELECT profile_picture_url FROM users WHERE id = $1`,
+      [userId]
+    );
+    profilePictureUrl = userRow?.profile_picture_url || null;
+  } catch (err) {
+    console.error('[Users] Profile picture lookup error:', err);
+  }
+
   // Try Cognito first if configured
   if (isCognitoConfigured()) {
     try {
@@ -74,6 +97,7 @@ router.get('/', async (c) => {
             fullName: user.name || '',
             company: user.company || '',
             tier: userTier,
+            profilePictureUrl,
             createdAt: null, // Cognito doesn't expose created_at easily
           },
         });
@@ -111,6 +135,7 @@ router.get('/', async (c) => {
           fullName: user.user_metadata?.full_name || '',
           company: user.user_metadata?.company || '',
           tier: userTier,
+          profilePictureUrl,
           createdAt: user.created_at,
         },
       });
@@ -528,6 +553,122 @@ router.patch('/api-keys/:keyId', requireTier('pro', 'enterprise'), async (c) => 
       createdAt: data.created_at,
       expiresAt: data.expires_at,
       isActive: data.is_active,
+    },
+  });
+});
+
+// POST /v1/me/profile-picture/upload-url - Get presigned URL for profile picture upload
+router.post('/profile-picture/upload-url', async (c) => {
+  const userId = c.get('userId');
+  const body = await c.req.json();
+
+  const { fileType } = body;
+
+  // Validate file type
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (!fileType || !allowedTypes.includes(fileType)) {
+    throw Errors.validation('File type must be image/jpeg, image/png, or image/webp');
+  }
+
+  // Generate unique file key
+  const timestamp = Date.now();
+  const ext = fileType.split('/')[1];
+  const key = `profile-pictures/${userId}/${timestamp}.${ext}`;
+
+  try {
+    // Create presigned URL for upload
+    const command = new PutObjectCommand({
+      Bucket: PROFILE_PICTURES_BUCKET,
+      Key: key,
+      ContentType: fileType,
+    });
+
+    const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 }); // 5 minutes
+
+    // Generate the final public URL
+    const imageUrl = CLOUDFRONT_DOMAIN
+      ? `https://${CLOUDFRONT_DOMAIN}/${key}`
+      : `https://${PROFILE_PICTURES_BUCKET}.s3.amazonaws.com/${key}`;
+
+    return c.json({
+      data: {
+        uploadUrl,
+        imageUrl,
+        key,
+      },
+    });
+  } catch (err) {
+    console.error('[Users] Generate presigned URL error:', err);
+    throw Errors.internal('Failed to generate upload URL');
+  }
+});
+
+// PATCH /v1/me/profile-picture - Update user's profile picture URL
+router.patch('/profile-picture', async (c) => {
+  const userId = c.get('userId');
+  const body = await c.req.json();
+
+  const { imageUrl } = body;
+
+  if (!imageUrl || typeof imageUrl !== 'string') {
+    throw Errors.validation('imageUrl is required');
+  }
+
+  // For now, store in user metadata in Cognito
+  // In production, you might want to add a profile_picture_url column to users table
+
+  // Try to update Cognito user attributes
+  if (isCognitoConfigured()) {
+    try {
+      // TODO: Update Cognito user custom attribute
+      // This would require extending the getUserById/updateUser functions
+      console.log('[Users] Profile picture update:', userId, imageUrl);
+    } catch (err) {
+      console.error('[Users] Cognito update error:', err);
+    }
+  }
+
+  // Try to update in RDS (upsert - create if doesn't exist)
+  try {
+    await query(
+      `INSERT INTO users (id, profile_picture_url, created_at, updated_at)
+       VALUES ($1, $2, NOW(), NOW())
+       ON CONFLICT (id)
+       DO UPDATE SET profile_picture_url = $2, updated_at = NOW()`,
+      [userId, imageUrl]
+    );
+  } catch (err) {
+    console.error('[Users] RDS profile picture update error:', err);
+
+    // Fallback to Supabase
+    if (supabaseAvailable && getSupabaseAdmin) {
+      try {
+        const admin = getSupabaseAdmin() as {
+          from: (table: string) => {
+            upsert: (data: unknown) => Promise<{ error: Error | null }>;
+          };
+        };
+
+        const { error } = await admin
+          .from('users')
+          .upsert({
+            id: userId,
+            profile_picture_url: imageUrl,
+            updated_at: new Date().toISOString(),
+          });
+
+        if (error) {
+          console.error('[Users] Supabase profile picture update error:', error);
+        }
+      } catch (sbErr) {
+        console.error('[Users] Supabase fallback error:', sbErr);
+      }
+    }
+  }
+
+  return c.json({
+    data: {
+      profilePictureUrl: imageUrl,
     },
   });
 });

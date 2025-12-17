@@ -135,9 +135,11 @@ export const authService = {
 
     if (rememberMe) {
       localStorage.setItem('demo-user', JSON.stringify(demoUser));
+      localStorage.setItem('rememberMe', 'true');
     } else {
       sessionStorage.setItem('demo-user', JSON.stringify(demoUser));
       sessionStorage.setItem('quotemyav_session_only', 'true');
+      localStorage.removeItem('rememberMe');
     }
 
     return { user: demoUser, error: null };
@@ -157,6 +159,9 @@ export const authService = {
 
     // Demo mode
     localStorage.removeItem('demo-user');
+    localStorage.removeItem('rememberMe');
+    sessionStorage.removeItem('demo-user');
+    sessionStorage.removeItem('quotemyav_session_only');
     return { error: null };
   },
 

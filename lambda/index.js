@@ -26841,20 +26841,20 @@ var SmartRouter = class {
     let i2 = 0;
     let res;
     for (; i2 < len; i2++) {
-      const router5 = routers[i2];
+      const router6 = routers[i2];
       try {
         for (let i22 = 0, len2 = routes.length; i22 < len2; i22++) {
-          router5.add(...routes[i22]);
+          router6.add(...routes[i22]);
         }
-        res = router5.match(method, path);
+        res = router6.match(method, path);
       } catch (e2) {
         if (e2 instanceof UnsupportedPathError) {
           continue;
         }
         throw e2;
       }
-      this.match = router5.match.bind(router5);
-      this.#routers = [router5];
+      this.match = router6.match.bind(router6);
+      this.#routers = [router6];
       this.#routes = void 0;
       break;
     }
@@ -46431,7 +46431,14 @@ async function processAIEdit(jobId, _userId, input, quote) {
 var ai_default = router2;
 
 // server/routes/users.ts
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 var router3 = new Hono2();
+var s3Client = new S3Client({
+  region: process.env.AWS_REGION || "us-east-1"
+});
+var PROFILE_PICTURES_BUCKET = process.env.PROFILE_PICTURES_BUCKET || "quotemyav-profile-pictures";
+var CLOUDFRONT_DOMAIN = process.env.CLOUDFRONT_DOMAIN || "";
 var supabaseAvailable4 = false;
 var getSupabaseAdmin5 = null;
 try {
@@ -46444,6 +46451,16 @@ try {
 router3.get("/", async (c2) => {
   const userId = c2.get("userId");
   const userTier = c2.get("userTier");
+  let profilePictureUrl = null;
+  try {
+    const userRow = await queryOne(
+      `SELECT profile_picture_url FROM users WHERE id = $1`,
+      [userId]
+    );
+    profilePictureUrl = userRow?.profile_picture_url || null;
+  } catch (err) {
+    console.error("[Users] Profile picture lookup error:", err);
+  }
   if (isCognitoConfigured()) {
     try {
       const user = await getUserById(userId);
@@ -46455,6 +46472,7 @@ router3.get("/", async (c2) => {
             fullName: user.name || "",
             company: user.company || "",
             tier: userTier,
+            profilePictureUrl,
             createdAt: null
             // Cognito doesn't expose created_at easily
           }
@@ -46478,6 +46496,7 @@ router3.get("/", async (c2) => {
           fullName: user.user_metadata?.full_name || "",
           company: user.user_metadata?.company || "",
           tier: userTier,
+          profilePictureUrl,
           createdAt: user.created_at
         }
       });
@@ -46748,6 +46767,83 @@ router3.patch("/api-keys/:keyId", requireTier("pro", "enterprise"), async (c2) =
     }
   });
 });
+router3.post("/profile-picture/upload-url", async (c2) => {
+  const userId = c2.get("userId");
+  const body = await c2.req.json();
+  const { fileType } = body;
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+  if (!fileType || !allowedTypes.includes(fileType)) {
+    throw Errors.validation("File type must be image/jpeg, image/png, or image/webp");
+  }
+  const timestamp = Date.now();
+  const ext = fileType.split("/")[1];
+  const key = `profile-pictures/${userId}/${timestamp}.${ext}`;
+  try {
+    const command = new PutObjectCommand({
+      Bucket: PROFILE_PICTURES_BUCKET,
+      Key: key,
+      ContentType: fileType
+    });
+    const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 });
+    const imageUrl = CLOUDFRONT_DOMAIN ? `https://${CLOUDFRONT_DOMAIN}/${key}` : `https://${PROFILE_PICTURES_BUCKET}.s3.amazonaws.com/${key}`;
+    return c2.json({
+      data: {
+        uploadUrl,
+        imageUrl,
+        key
+      }
+    });
+  } catch (err) {
+    console.error("[Users] Generate presigned URL error:", err);
+    throw Errors.internal("Failed to generate upload URL");
+  }
+});
+router3.patch("/profile-picture", async (c2) => {
+  const userId = c2.get("userId");
+  const body = await c2.req.json();
+  const { imageUrl } = body;
+  if (!imageUrl || typeof imageUrl !== "string") {
+    throw Errors.validation("imageUrl is required");
+  }
+  if (isCognitoConfigured()) {
+    try {
+      console.log("[Users] Profile picture update:", userId, imageUrl);
+    } catch (err) {
+      console.error("[Users] Cognito update error:", err);
+    }
+  }
+  try {
+    await query(
+      `INSERT INTO users (id, profile_picture_url, created_at, updated_at)
+       VALUES ($1, $2, NOW(), NOW())
+       ON CONFLICT (id)
+       DO UPDATE SET profile_picture_url = $2, updated_at = NOW()`,
+      [userId, imageUrl]
+    );
+  } catch (err) {
+    console.error("[Users] RDS profile picture update error:", err);
+    if (supabaseAvailable4 && getSupabaseAdmin5) {
+      try {
+        const admin = getSupabaseAdmin5();
+        const { error: error46 } = await admin.from("users").upsert({
+          id: userId,
+          profile_picture_url: imageUrl,
+          updated_at: (/* @__PURE__ */ new Date()).toISOString()
+        });
+        if (error46) {
+          console.error("[Users] Supabase profile picture update error:", error46);
+        }
+      } catch (sbErr) {
+        console.error("[Users] Supabase fallback error:", sbErr);
+      }
+    }
+  }
+  return c2.json({
+    data: {
+      profilePictureUrl: imageUrl
+    }
+  });
+});
 var users_default = router3;
 
 // server/routes/webhooks.ts
@@ -46957,6 +47053,175 @@ async function generateSignature(payload, secretHash) {
   return Array.from(new Uint8Array(signature)).map((b2) => b2.toString(16).padStart(2, "0")).join("");
 }
 var webhooks_default = router4;
+
+// server/routes/chat.ts
+var router5 = new Hono2();
+var anthropicClient2 = null;
+async function getClient2() {
+  if (anthropicClient2) return anthropicClient2;
+  const apiKey = await getAnthropicApiKey();
+  anthropicClient2 = new sdk_default({ apiKey });
+  return anthropicClient2;
+}
+var SYSTEM_PROMPT = `You are QMAV Assistant, the AI helper for QuoteMyAV - a modern platform for creating professional AV (Audio/Video) equipment quotes.
+
+## Your Role
+You help users with:
+- Questions about AV equipment (audio, video, lighting, staging, rigging)
+- Quote creation and management
+- Pricing guidance and budget planning
+- Feature navigation and how-to questions
+- Event planning advice for AV needs
+
+## Knowledge Areas
+- **Audio**: speakers, microphones, mixers, wireless systems, line arrays, monitors
+- **Video**: projectors, LED walls, cameras, switchers, streaming equipment
+- **Lighting**: moving heads, LED fixtures, conventional lights, DMX control
+- **Staging**: platforms, risers, pipe and drape, scenic elements
+- **Rigging**: truss, motors, chain hoists, safety equipment
+- **Production**: power distribution, cabling, networking, labor
+
+## Tone & Style
+- Be helpful, friendly, and professional
+- Keep responses concise (2-3 paragraphs max for most questions)
+- Use simple language - avoid excessive technical jargon
+- Guide users to relevant features when appropriate
+- Be encouraging about their events and projects
+
+## Platform Features You Can Help With
+- Creating new quotes from event details
+- Editing existing quotes with AI assistance
+- Adding/removing equipment line items
+- Adjusting budgets and pricing
+- Exporting quotes as PDFs
+- Managing quote versions
+- Understanding subscription tiers
+
+## Important Guidelines
+1. Don't make up specific pricing - pricing varies by market and time
+2. Encourage users to use the quote generation feature for detailed pricing
+3. If you don't know something specific about the platform, be honest
+4. Guide users to contact support for account-specific issues
+5. Keep conversations focused on AV and the QuoteMyAV platform
+
+## Context Awareness
+You may receive context about:
+- Current page (Dashboard, Quote Creation, etc.)
+- User's subscription tier (free, starter, pro, enterprise)
+- Quote ID if they're viewing/editing a specific quote
+- Event type if relevant
+
+Use this context to give more relevant, targeted help.`;
+var chatMessageSchema = external_exports.object({
+  message: external_exports.string().min(1).max(2e3),
+  context: external_exports.object({
+    currentPage: external_exports.string().optional(),
+    subscriptionTier: external_exports.enum(["free", "starter", "pro", "enterprise"]).optional(),
+    quoteId: external_exports.string().optional(),
+    eventType: external_exports.string().optional()
+  }).optional(),
+  conversationHistory: external_exports.array(
+    external_exports.object({
+      role: external_exports.enum(["user", "assistant"]),
+      content: external_exports.string()
+    })
+  ).optional()
+});
+router5.post(
+  "/message",
+  zValidator("json", chatMessageSchema),
+  async (c2) => {
+    const body = c2.req.valid("json");
+    const client = await getClient2();
+    let contextString = "";
+    if (body.context) {
+      const parts = [];
+      if (body.context.currentPage) {
+        parts.push(`User is currently on: ${body.context.currentPage}`);
+      }
+      if (body.context.subscriptionTier) {
+        parts.push(`User's subscription tier: ${body.context.subscriptionTier}`);
+      }
+      if (body.context.quoteId) {
+        parts.push(`User is viewing quote: ${body.context.quoteId}`);
+      }
+      if (body.context.eventType) {
+        parts.push(`Event type: ${body.context.eventType}`);
+      }
+      if (parts.length > 0) {
+        contextString = `
+
+Current Context:
+${parts.join("\n")}`;
+      }
+    }
+    const messages = [];
+    if (body.conversationHistory && body.conversationHistory.length > 0) {
+      const recentHistory = body.conversationHistory.slice(-10);
+      for (const msg of recentHistory) {
+        messages.push({
+          role: msg.role,
+          content: msg.content
+        });
+      }
+    }
+    messages.push({
+      role: "user",
+      content: body.message + contextString
+    });
+    try {
+      const response = await client.messages.create({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1024,
+        system: SYSTEM_PROMPT,
+        messages
+      });
+      const textContent = response.content.find((c3) => c3.type === "text");
+      if (!textContent || textContent.type !== "text") {
+        throw Errors.aiGenerationFailed("No text response from Claude");
+      }
+      return c2.json({
+        data: {
+          response: textContent.text
+        }
+      });
+    } catch (error46) {
+      console.error("[Chat] Claude API error:", error46);
+      if (error46 instanceof sdk_default.APIError) {
+        if (error46.status === 429) {
+          throw Errors.aiRateLimited(Date.now() + 6e4);
+        }
+        if (error46.status === 401) {
+          throw Errors.internal("AI service authentication failed");
+        }
+        throw Errors.aiGenerationFailed(error46.message);
+      }
+      throw Errors.aiGenerationFailed("Failed to process chat message");
+    }
+  }
+);
+router5.get("/health", async (c2) => {
+  try {
+    await getAnthropicApiKey();
+    return c2.json({
+      data: {
+        status: "ok",
+        service: "chat",
+        model: "claude-sonnet-4-20250514"
+      }
+    });
+  } catch (error46) {
+    console.error("[Chat] Health check failed:", error46);
+    return c2.json({
+      data: {
+        status: "error",
+        service: "chat",
+        error: "AI service not configured"
+      }
+    }, 503);
+  }
+});
+var chat_default = router5;
 
 // node_modules/hono/dist/adapter/aws-lambda/handler.js
 function sanitizeHeaderValue(value) {
@@ -47295,6 +47560,13 @@ app.use(
     credentials: true
   })
 );
+app.get("/health", (c2) => {
+  return c2.json({
+    status: "ok",
+    version: "1.0.0",
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  });
+});
 app.get("/v1/health", (c2) => {
   return c2.json({
     status: "ok",
@@ -47306,6 +47578,7 @@ app.use("/v1/*", authMiddleware);
 app.use("/v1/*", rateLimitMiddleware);
 app.route("/v1/quotes", quotes_default);
 app.route("/v1/ai", ai_default);
+app.route("/v1/chat", chat_default);
 app.route("/v1/me", users_default);
 app.route("/v1/webhooks", webhooks_default);
 app.onError(errorHandler2);

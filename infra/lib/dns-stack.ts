@@ -69,15 +69,8 @@ export class DnsStack extends cdk.Stack {
       ),
     });
 
-    // API subdomain (optional - if using api.quotemyav.com)
-    new route53.ARecord(this, 'ApiRecord', {
-      zone: this.hostedZone,
-      recordName: `api.${props.domainName}`,
-      target: route53.RecordTarget.fromAlias(
-        new route53Targets.ApiGateway(props.api)
-      ),
-      comment: 'QuoteMyAV API',
-    });
+    // Note: API is accessed via CloudFront at /v1/* path
+    // No separate api.quotemyav.com subdomain needed
 
     // Outputs
     new cdk.CfnOutput(this, 'HostedZoneId', {

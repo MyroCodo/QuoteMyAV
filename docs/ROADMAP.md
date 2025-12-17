@@ -14,6 +14,7 @@ Build a comprehensive quote-building system "like R2" for AV and live events, co
 | 1 | Live Quote Editor | ✅ Complete | v1.1 |
 | 2 | AI Edit Assistant | ✅ Complete | v1.2 |
 | 3 | Quote Versioning | ✅ Complete | v1.3 |
+| 3.5 | UX Polish & User Features | ✅ Complete | v1.4 |
 | 4 | Equipment Catalog & Packages | 🔲 Planned | v2.0 |
 | 5 | Inventory & Availability | 🔲 Planned | v2.1 |
 | 6 | Labor & Logistics | 🔲 Planned | v2.2 |
@@ -121,6 +122,73 @@ See: `docs/mvp/01-architecture.md`
 - `QuoteChangeType`
 - `QuoteVersionDiff`
 - `VersionChange`
+
+---
+
+## Phase 3.5: UX Polish & User Features ✅
+
+**Goal:** Enhanced user experience with AI chatbot, profile pictures, and legal compliance
+
+### Features Delivered
+
+#### AI Chatbot Widget
+- Floating chat bubble (bottom-right, 56x56px teal button)
+- Expandable chat window (350px wide)
+- Claude API integration with streaming responses
+- Context-aware responses (knows current page, subscription tier)
+- Conversation history with localStorage persistence
+- Demo mode with keyword-based mock responses
+- 10+ topic areas covered (pricing, equipment, weddings, corporate, etc.)
+
+#### Profile Pictures
+- Avatar component with initials fallback
+- Deterministic color generation based on username
+- S3 presigned URL upload flow
+- ProfilePictureUpload component with drag-and-drop
+- File validation (JPG/PNG/WebP, max 5MB)
+- Demo mode stores images as data URLs in localStorage
+- Avatar displayed in navbar and settings
+
+#### Legal Pages
+- Plans page with detailed feature comparison table
+- Privacy Policy (GDPR-compliant, 13 sections)
+- Terms of Service with subscription billing terms
+- FTC-compliant checkout with billing consent checkbox
+- Footer links on landing page
+
+#### Settings Enhancements
+- Checkout redirect for plan upgrades (not direct upgrade)
+- Profile picture section at top of settings
+- Improved plan comparison cards
+
+### Files Created
+- `src/components/ChatWidget/ChatWidget.tsx`
+- `src/components/ChatWidget/ChatBubble.tsx`
+- `src/components/ChatWidget/ChatWindow.tsx`
+- `src/components/ChatWidget/ChatMessage.tsx`
+- `src/components/ChatWidget/TypingIndicator.tsx`
+- `src/stores/chatStore.ts`
+- `src/services/chatbot.ts`
+- `src/components/ui/Avatar.tsx`
+- `src/components/profile/ProfilePictureUpload.tsx`
+- `src/services/profile.ts`
+- `src/pages/Plans.tsx`
+- `src/pages/Privacy.tsx`
+- `src/pages/Terms.tsx`
+- `server/routes/chat.ts`
+- `migrations/003_add_profile_picture.sql`
+
+### Files Modified
+- `src/App.tsx` (routes, ChatWidget integration)
+- `src/layouts/MainLayout.tsx` (Avatar in navbar)
+- `src/pages/Settings.tsx` (profile picture, checkout redirect)
+- `src/pages/Checkout.tsx` (billing consent checkbox)
+- `src/pages/Landing.tsx` (footer links)
+- `src/stores/authStore.ts` (updateProfilePicture action)
+- `src/services/auth.ts` (rememberMe persistence fix)
+- `server/routes/users.ts` (profile picture endpoints)
+- `api/index.ts` (chat route)
+- `src/index.css` (chat animations)
 
 ---
 
@@ -953,6 +1021,14 @@ api_keys (id, name, key_hash, permissions, is_active)
 - [x] Version history tracks all changes
 - [x] Users can compare and restore versions
 
+### v1.4 (Phase 3.5)
+- [x] AI chatbot provides real-time help
+- [x] Users can upload profile pictures
+- [x] Legal pages (Privacy, Terms) are accessible
+- [x] Checkout has FTC-compliant billing disclosure
+- [x] Plans page shows detailed feature comparison
+- [x] Demo mode works without backend API
+
 ### v2.x (Phases 4-6)
 - [ ] 100+ catalog items with packages
 - [ ] Real-time availability checks
@@ -981,3 +1057,5 @@ api_keys (id, name, key_hash, permissions, is_active)
 - `docs/shared/llm-architecture.md` - Claude integration details
 - `docs/shared/quote-lifecycle.md` - Quote status workflow
 - `docs/business/pricing-tiers.md` - Subscription pricing
+- `docs/ChatWidget-README.md` - AI chatbot component documentation
+- `docs/PROFILE_PICTURES.md` - Profile picture feature documentation

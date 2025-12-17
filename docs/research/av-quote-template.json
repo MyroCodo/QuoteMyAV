@@ -1,0 +1,452 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AV Quote PDF Template",
+  "description": "Template structure for generating professional AV rental quotes/estimates",
+  "version": "1.0.0",
+
+  "document": {
+    "type": "Estimate",
+    "types_available": ["Estimate", "Quote", "Reservation", "Gearlist", "Invoice"],
+
+    "page_settings": {
+      "size": "letter",
+      "orientation": "portrait",
+      "margins": {
+        "top": "0.5in",
+        "bottom": "0.75in",
+        "left": "0.5in",
+        "right": "0.5in"
+      }
+    },
+
+    "fonts": {
+      "primary": "Arial",
+      "secondary": "Arial Narrow",
+      "monospace": "Courier New",
+      "sizes": {
+        "title": 24,
+        "section_header": 14,
+        "subsection_header": 12,
+        "body": 10,
+        "small": 8,
+        "footer": 8
+      }
+    },
+
+    "colors": {
+      "primary": "#CC0000",
+      "secondary": "#333333",
+      "accent": "#666666",
+      "border": "#CCCCCC",
+      "background_alt": "#F5F5F5"
+    }
+  },
+
+  "header": {
+    "layout": "three-column",
+    "company": {
+      "logo": {
+        "path": "/assets/logo.png",
+        "width": 180,
+        "height": "auto",
+        "position": "left"
+      },
+      "tagline": "CREATING DEFINING EXPERIENCES",
+      "remit_to": {
+        "label": "Remit Payment to",
+        "address_line_1": "",
+        "address_line_2": "",
+        "city_state_zip": "",
+        "phone": "",
+        "website": ""
+      }
+    },
+    "document_info": {
+      "position": "right",
+      "fields": [
+        { "label": "Order No:", "field": "order_number", "bold": true },
+        { "label": "Version:", "field": "version" },
+        { "label": "Status:", "field": "status" },
+        { "label": "Date Created:", "field": "date_created", "format": "MM/DD/YYYY" }
+      ]
+    }
+  },
+
+  "parties_block": {
+    "layout": "three-column-equal",
+    "columns": [
+      {
+        "header": "Client",
+        "fields": [
+          { "field": "client.company_name", "bold": true },
+          { "field": "client.contact_name" },
+          { "field": "client.address_line_1" },
+          { "field": "client.address_line_2" },
+          { "field": "client.city_state_zip" },
+          { "label": "Phone:", "field": "client.phone" },
+          { "label": "Cell:", "field": "client.cell" },
+          { "field": "client.email" }
+        ]
+      },
+      {
+        "header": "Venue / Site",
+        "fields": [
+          { "field": "venue.name", "bold": true },
+          { "field": "venue.address_line_1" },
+          { "field": "venue.address_line_2" },
+          { "field": "venue.city_state_zip" },
+          { "label": "Phone:", "field": "venue.phone" },
+          { "label": "Attention:", "field": "venue.attention" },
+          { "label": "Room/Booth:", "field": "venue.room" }
+        ]
+      },
+      {
+        "header": "Prepared By",
+        "fields": [
+          { "field": "prepared_by.name", "bold": true },
+          { "field": "prepared_by.title" },
+          { "field": "prepared_by.email" },
+          { "field": "prepared_by.phone" }
+        ]
+      }
+    ]
+  },
+
+  "estimate_information": {
+    "header": "Estimate Information",
+    "layout": "two-column",
+    "left_column": [
+      { "label": "Event Name:", "field": "event.name", "bold_value": true },
+      { "label": "Order No:", "field": "order_number" },
+      { "label": "Ship Date:", "field": "dates.ship", "format": "MM/DD/YYYY hh:mm A" },
+      { "label": "Load In:", "field": "dates.load_in", "format": "MM/DD/YYYY hh:mm A" },
+      { "label": "Event Dates:", "field": "dates.event", "format": "MM/DD/YYYY hh:mm A - MM/DD/YYYY hh:mm A" },
+      { "label": "Return By:", "field": "dates.return", "format": "MM/DD/YYYY hh:mm A" },
+      { "label": "Ship Via:", "field": "shipping.method" },
+      { "label": "Delivery:", "field": "shipping.delivery_notes" },
+      { "label": "Meal Plan:", "field": "event.meal_plan" }
+    ],
+    "right_column": [
+      { "label": "Customer No:", "field": "client.customer_number" },
+      { "label": "Bill To:", "field": "billing.company" },
+      { "label": "Billing Contact:", "field": "billing.contact_name" },
+      { "label": "Phone:", "field": "billing.phone" },
+      { "label": "Email:", "field": "billing.email" },
+      { "label": "Customer PO#:", "field": "billing.po_number" },
+      { "label": "Terms:", "field": "billing.terms" }
+    ]
+  },
+
+  "estimate_summary": {
+    "header": "Estimate Summary",
+    "position": "after_estimate_info",
+    "show_on_first_page": true,
+    "show_on_last_page": true,
+    "fields": [
+      { "label": "Equipment:", "field": "totals.equipment", "format": "currency" },
+      { "label": "Discount:", "field": "totals.discount", "format": "currency", "show_negative": true },
+      { "label": "Subtotal:", "field": "totals.subtotal", "format": "currency", "bold": true },
+      { "label": "Sale Items:", "field": "totals.sale_items", "format": "currency" },
+      { "label": "**Consumables:", "field": "totals.consumables", "format": "currency" },
+      { "label": "Labor:", "field": "totals.labor", "format": "currency" },
+      { "label": "Specialty Charges:", "field": "totals.specialty", "format": "currency" },
+      { "label": "Travel Expenses:", "field": "totals.travel", "format": "currency" },
+      { "label": "Venue Charges:", "field": "totals.venue", "format": "currency" },
+      { "label": "Shipping Charges:", "field": "totals.shipping", "format": "currency" },
+      { "label": "Miscellaneous:", "field": "totals.misc", "format": "currency" },
+      { "label": "Service Charge:", "field": "totals.service_charge", "format": "currency" },
+      { "label": "~Project Management:", "field": "totals.project_management", "format": "currency" },
+      { "label": "Sales Tax:", "field": "totals.sales_tax", "format": "currency" },
+      { "label": "Pre-Payment:", "field": "totals.prepayment", "format": "currency" },
+      { "label": "Total:", "field": "totals.grand_total", "format": "currency", "bold": true, "size": "large" }
+    ],
+    "footer_note": "Payable in USD Only"
+  },
+
+  "equipment_section": {
+    "header": "Equipment",
+    "show_header_on_each_page": false,
+    "page_header": {
+      "fields": [
+        { "label": "Event Name:", "field": "event.name" },
+        { "label": "Venue:", "field": "venue.name" }
+      ],
+      "order_number": true
+    },
+
+    "categories": [
+      {
+        "id": "audio",
+        "name": "AUDIO",
+        "display_name": "AUDIO - {location}",
+        "icon": null,
+        "sort_order": 1
+      },
+      {
+        "id": "video",
+        "name": "VIDEO",
+        "display_name": "VIDEO - {location}",
+        "icon": null,
+        "sort_order": 2
+      },
+      {
+        "id": "lighting",
+        "name": "LIGHTING",
+        "display_name": "LIGHTING",
+        "icon": null,
+        "sort_order": 3
+      },
+      {
+        "id": "staging",
+        "name": "STAGING",
+        "display_name": "STAGING",
+        "icon": null,
+        "sort_order": 4
+      },
+      {
+        "id": "power",
+        "name": "POWER",
+        "display_name": "POWER - {location}",
+        "icon": null,
+        "sort_order": 5
+      },
+      {
+        "id": "rigging",
+        "name": "RIGGING",
+        "display_name": "RIGGING",
+        "icon": null,
+        "sort_order": 6
+      },
+      {
+        "id": "trucking",
+        "name": "TRUCKING & TRAVEL",
+        "display_name": "TRUCKING & TRAVEL",
+        "icon": null,
+        "sort_order": 7
+      },
+      {
+        "id": "delivery",
+        "name": "DELIVERY",
+        "display_name": "Delivery",
+        "icon": null,
+        "sort_order": 8
+      }
+    ],
+
+    "line_item": {
+      "columns": [
+        { "field": "quantity", "header": "Qty", "width": "8%", "align": "right" },
+        { "field": "description", "header": "Description", "width": "72%", "align": "left" },
+        { "field": "amount", "header": "Amount", "width": "20%", "align": "right", "format": "currency" }
+      ],
+      "show_amount": true,
+      "indent_kit_items": true,
+      "kit_item_style": "italic"
+    },
+
+    "subtotal": {
+      "label": "Sub Total",
+      "show_per_category": true,
+      "bold": true
+    }
+  },
+
+  "labor_section": {
+    "header": "Labor",
+    "alternate_headers": ["Labor Breakdown"],
+
+    "scheduling": {
+      "group_by": "date",
+      "date_format": "M/D/YY",
+      "show_phase": true,
+      "phases": ["Travel", "Load-In", "Setup", "Rehearsal", "Show", "Strike", "Travel Home"]
+    },
+
+    "columns": [
+      { "field": "quantity", "header": "Qty", "width": "6%", "align": "center" },
+      { "field": "role", "header": "Personnel", "width": "34%", "align": "left" },
+      { "field": "task", "header": "Task", "width": "15%", "align": "left", "optional": true },
+      { "field": "reg_rate", "header": "Reg. Rate", "width": "10%", "align": "right", "format": "currency" },
+      { "field": "ot_rate", "header": "OT Rate", "width": "10%", "align": "right", "format": "currency" },
+      { "field": "dt_rate", "header": "DT Rate", "width": "10%", "align": "right", "format": "currency" },
+      { "field": "reg_hours", "header": "Reg", "width": "5%", "align": "right", "format": "decimal" },
+      { "field": "ot_hours", "header": "OT", "width": "5%", "align": "right", "format": "decimal" },
+      { "field": "dt_hours", "header": "DT", "width": "5%", "align": "right", "format": "decimal" },
+      { "field": "extended", "header": "Extended", "width": "12%", "align": "right", "format": "currency" }
+    ],
+
+    "rate_multipliers": {
+      "regular": 1.0,
+      "overtime": 1.5,
+      "double_time": 2.0
+    },
+
+    "billing_rules": {
+      "standard_day_hours": 10,
+      "overtime_after_hours": 10,
+      "double_time_start": "00:00",
+      "double_time_end": "06:00",
+      "turnaround_required_hours": 8,
+      "meal_break_interval_hours": 5
+    },
+
+    "common_roles": [
+      { "id": "pm", "name": "Project Manager", "default_rate": 95.00 },
+      { "id": "td", "name": "Technical Director", "default_rate": 90.00 },
+      { "id": "a1", "name": "Audio Lead Technician (A1)", "default_rate": 80.00 },
+      { "id": "a2", "name": "Audio Technician (A2)", "default_rate": 65.00 },
+      { "id": "v1", "name": "Video Lead Technician", "default_rate": 80.00 },
+      { "id": "v2", "name": "Video Technician", "default_rate": 65.00 },
+      { "id": "l1", "name": "Lighting Lead Technician", "default_rate": 80.00 },
+      { "id": "l2", "name": "Lighting Technician", "default_rate": 65.00 },
+      { "id": "cam", "name": "Camera Operator", "default_rate": 80.00 },
+      { "id": "gfx", "name": "Graphics Operator", "default_rate": 80.00 },
+      { "id": "rec", "name": "Recording/Playback Technician", "default_rate": 80.00 },
+      { "id": "setup", "name": "Setup Technician", "default_rate": 60.00 },
+      { "id": "strike", "name": "Strike Technician", "default_rate": 60.00 },
+      { "id": "gen", "name": "General Technician", "default_rate": 55.00 }
+    ],
+
+    "subtotal": {
+      "label": "Sub Total",
+      "show_per_day": true,
+      "bold": true
+    }
+  },
+
+  "notes_section": {
+    "header": "Notes:",
+    "show_if_empty": true,
+    "shipping_comments": {
+      "header": "Shipping Comments:",
+      "position": "after_estimate_info"
+    }
+  },
+
+  "summary_of_costs": {
+    "header": "Summary of Costs",
+    "position": "last_page",
+    "layout": "right-aligned-table",
+    "fields": [
+      { "label": "Equipment:", "field": "totals.equipment", "format": "currency" },
+      { "label": "Discount:", "field": "totals.discount", "format": "currency" },
+      { "label": "Subtotal:", "field": "totals.subtotal", "format": "currency" },
+      { "separator": true },
+      { "label": "Sale Items:", "field": "totals.sale_items", "format": "currency" },
+      { "label": "**Consumables:", "field": "totals.consumables", "format": "currency" },
+      { "label": "†Labor:", "field": "totals.labor", "format": "currency" },
+      { "label": "Specialty Charges:", "field": "totals.specialty", "format": "currency" },
+      { "label": "Travel Expenses:", "field": "totals.travel", "format": "currency" },
+      { "label": "Venue Charges:", "field": "totals.venue", "format": "currency" },
+      { "label": "Shipping Charges:", "field": "totals.shipping", "format": "currency" },
+      { "label": "Miscellaneous:", "field": "totals.misc", "format": "currency" },
+      { "label": "Service Charge:", "field": "totals.service_charge", "format": "currency" },
+      { "label": "~Project Management:", "field": "totals.project_management", "format": "currency" },
+      { "label": "Sales Tax:", "field": "totals.sales_tax", "format": "currency" },
+      { "label": "Pre-Payment:", "field": "totals.prepayment", "format": "currency" },
+      { "separator": true },
+      { "label": "Total:", "field": "totals.grand_total", "format": "currency", "bold": true, "font_size": "large" }
+    ]
+  },
+
+  "signature_block": {
+    "position": "after_summary_first_page",
+    "layout": {
+      "signature_line": {
+        "label": "Signature and Title as Acceptance of the Estimate and Terms",
+        "line_width": "60%"
+      },
+      "date_line": {
+        "label": "Date of Acceptance",
+        "line_width": "25%"
+      }
+    }
+  },
+
+  "terms_and_conditions": {
+    "position": "first_page_footer",
+    "font_size": 7,
+    "sections": [
+      {
+        "id": "liability",
+        "text": "Customer shall be responsible for the full replacement value of any equipment that is lost, stolen or damaged under the care of the Customer or their affiliates during the rental period."
+      },
+      {
+        "id": "venue_charges",
+        "text": "Unless notated otherwise, this Estimate may not include venue related charges such as: power, rigging, lift rental or union labor charges. Sales Tax is an estimate only based on information provided in the Estimate. Sales Tax will be included only for shipments into states where we are registered to collect sales tax. Customer will be liable for use tax if shipment is requested into a state where we are not registered to collect tax. If Customer is exempt from sales tax, a valid exemption certificate must be on file before sales tax can be removed from the Estimate."
+      },
+      {
+        "id": "non_discountable",
+        "prefix": "*",
+        "text": "Item or service is non discountable."
+      },
+      {
+        "id": "consumables",
+        "prefix": "**",
+        "text": "Includes cables, batteries, tape, adapters and connectors."
+      },
+      {
+        "id": "project_management",
+        "prefix": "~",
+        "text": "Project Management includes all estimating, tracking, consulting and planning of the event."
+      },
+      {
+        "id": "cancellation",
+        "text": "Cancellation Clause: 100% of the Estimate will be charged if the Customer cancels the event within 72 hours of the Ship Date/Time."
+      }
+    ]
+  },
+
+  "labor_note": {
+    "position": "last_page",
+    "header": "Labor Note:",
+    "prefix": "†",
+    "text": "Labor rates have been estimated based on the information provided. The quoted labor call times are subject to revision as details change. Actual hours and applicable rates will be billed as accrued during event. All Labor is based on a Ten (10) hour billing day. After Ten (10) hours labor will be billed at 1.5 times the base hourly rate. Additionally after midnight and before 6:00am, labor will be billed at 2 times the base hourly rate. An 8-hour turnaround is required between work days or billing will start at 1.5 times the base hourly rate. A meal break must be provided every 5 hours. Meal breaks are either 1 hour off the clock or ½ hour on the clock if a meal is provided. Canceling a labor call with less than 24 hours' notice will result in a charge of a flat day (8-hours) for each position canceled. Changing a call time requires 24 hours' notice in advance of the new call time."
+  },
+
+  "page_footer": {
+    "left": "Order No: {order_number}",
+    "right": "Page {page} of {total_pages}",
+    "font_size": 8
+  },
+
+  "page_header_continuation": {
+    "show_on_pages": "2+",
+    "fields": [
+      { "label": "Event Name:", "field": "event.name" },
+      { "label": "Venue:", "field": "venue.name" }
+    ],
+    "order_number": {
+      "label": "Order Number",
+      "field": "order_number"
+    }
+  },
+
+  "formatting_rules": {
+    "currency": {
+      "locale": "en-US",
+      "currency": "USD",
+      "show_symbol": true,
+      "decimal_places": 2,
+      "negative_format": "parentheses"
+    },
+    "dates": {
+      "default_format": "MM/DD/YYYY",
+      "datetime_format": "MM/DD/YYYY hh:mm A",
+      "time_format": "hh:mm A"
+    },
+    "numbers": {
+      "decimal_places": 2,
+      "thousands_separator": ","
+    }
+  },
+
+  "special_markers": {
+    "non_discountable": "*",
+    "consumables": "**",
+    "labor_estimate": "†",
+    "project_management": "~",
+    "kit_component": "italic",
+    "notes_inline": "***"
+  }
+}

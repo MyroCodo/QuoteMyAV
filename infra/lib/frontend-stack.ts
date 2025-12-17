@@ -108,6 +108,7 @@ export class FrontendStack extends cdk.Stack {
             bucketName: `quotemyav-logs-${envPrefix}-${this.account}`,
             encryption: s3.BucketEncryption.S3_MANAGED,
             removalPolicy: cdk.RemovalPolicy.RETAIN,
+            objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_PREFERRED, // Required for CloudFront logging
             lifecycleRules: [
               {
                 expiration: cdk.Duration.days(90),
@@ -126,6 +127,8 @@ export class FrontendStack extends cdk.Stack {
         destinationBucket: this.bucket,
         distribution: this.distribution,
         distributionPaths: ['/*'],
+        memoryLimit: 512, // Increased from default 128MB for large assets
+        ephemeralStorageSize: cdk.Size.mebibytes(1024), // 1GB temp storage
       });
     }
 

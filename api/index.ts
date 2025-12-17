@@ -11,6 +11,7 @@ import quotesRouter from '../server/routes/quotes.js';
 import aiRouter from '../server/routes/ai.js';
 import usersRouter from '../server/routes/users.js';
 import webhooksRouter from '../server/routes/webhooks.js';
+import chatRouter from '../server/routes/chat.js';
 
 // Types for Hono context
 export type Variables = {
@@ -56,7 +57,14 @@ app.use(
   })
 );
 
-// Health check (no auth required)
+// Health check (no auth required) - both /health and /v1/health for flexibility
+app.get('/health', (c) => {
+  return c.json({
+    status: 'ok',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+  });
+});
 app.get('/v1/health', (c) => {
   return c.json({
     status: 'ok',
@@ -72,6 +80,7 @@ app.use('/v1/*', rateLimitMiddleware);
 // Mount routers
 app.route('/v1/quotes', quotesRouter);
 app.route('/v1/ai', aiRouter);
+app.route('/v1/chat', chatRouter);
 app.route('/v1/me', usersRouter);
 app.route('/v1/webhooks', webhooksRouter);
 
@@ -92,9 +101,10 @@ app.notFound((c) => {
   );
 });
 
-// Vercel Edge Runtime config (used when deployed to Vercel)
+// Vercel Serverless config (Node.js runtime for pg support)
 export const config = {
-  runtime: 'edge',
+  runtime: 'nodejs',
+  maxDuration: 30,
 };
 
 // Export for Vercel Edge

@@ -1,0 +1,361 @@
+{
+  "eventTypes": [
+    {
+      "type": "Corporate Conference",
+      "sizes": ["small", "medium", "large", "massive"],
+      "typicalCategories": ["audio", "video", "lighting", "staging", "power", "comms", "labor"],
+      "weight": 20
+    },
+    {
+      "type": "Corporate Awards Gala",
+      "sizes": ["medium", "large", "massive"],
+      "typicalCategories": ["audio", "video", "lighting", "staging", "decor", "rigging", "power", "labor"],
+      "weight": 15
+    },
+    {
+      "type": "Product Launch",
+      "sizes": ["small", "medium", "large"],
+      "typicalCategories": ["audio", "video", "lighting", "staging", "signal", "power", "labor"],
+      "weight": 12
+    },
+    {
+      "type": "Trade Show Booth",
+      "sizes": ["tiny", "small", "medium"],
+      "typicalCategories": ["audio", "video", "lighting", "power"],
+      "weight": 10
+    },
+    {
+      "type": "Wedding Reception",
+      "sizes": ["small", "medium"],
+      "typicalCategories": ["audio", "lighting", "staging", "decor"],
+      "weight": 8
+    },
+    {
+      "type": "Concert/Festival",
+      "sizes": ["medium", "large", "massive"],
+      "typicalCategories": ["audio", "video", "lighting", "staging", "rigging", "power", "comms", "labor"],
+      "weight": 10
+    },
+    {
+      "type": "Hybrid Event/Livestream",
+      "sizes": ["small", "medium", "large"],
+      "typicalCategories": ["audio", "video", "signal", "lighting", "power", "comms", "labor"],
+      "weight": 12
+    },
+    {
+      "type": "Press Conference",
+      "sizes": ["tiny", "small", "medium"],
+      "typicalCategories": ["audio", "video", "lighting", "staging"],
+      "weight": 6
+    },
+    {
+      "type": "Shareholder Meeting",
+      "sizes": ["medium", "large"],
+      "typicalCategories": ["audio", "video", "lighting", "staging", "signal", "power", "labor"],
+      "weight": 5
+    },
+    {
+      "type": "Graduation Ceremony",
+      "sizes": ["medium", "large", "massive"],
+      "typicalCategories": ["audio", "video", "lighting", "staging", "power", "labor"],
+      "weight": 4
+    },
+    {
+      "type": "Political Rally",
+      "sizes": ["medium", "large", "massive"],
+      "typicalCategories": ["audio", "video", "lighting", "staging", "rigging", "power", "comms", "labor"],
+      "weight": 3
+    },
+    {
+      "type": "Fundraiser Gala",
+      "sizes": ["small", "medium", "large"],
+      "typicalCategories": ["audio", "video", "lighting", "staging", "decor", "power", "labor"],
+      "weight": 8
+    },
+    {
+      "type": "Fashion Show",
+      "sizes": ["small", "medium"],
+      "typicalCategories": ["audio", "video", "lighting", "staging", "decor", "rigging", "power", "labor"],
+      "weight": 4
+    },
+    {
+      "type": "Town Hall Meeting",
+      "sizes": ["small", "medium"],
+      "typicalCategories": ["audio", "video", "lighting", "staging", "comms"],
+      "weight": 5
+    },
+    {
+      "type": "Religious Service",
+      "sizes": ["small", "medium", "large"],
+      "typicalCategories": ["audio", "video", "lighting", "staging"],
+      "weight": 4
+    },
+    {
+      "type": "Esports Tournament",
+      "sizes": ["medium", "large"],
+      "typicalCategories": ["audio", "video", "signal", "lighting", "staging", "power", "comms", "labor"],
+      "weight": 3
+    },
+    {
+      "type": "Film Premiere",
+      "sizes": ["medium", "large"],
+      "typicalCategories": ["audio", "video", "lighting", "staging", "decor", "power", "labor"],
+      "weight": 3
+    },
+    {
+      "type": "Training Seminar",
+      "sizes": ["tiny", "small", "medium"],
+      "typicalCategories": ["audio", "video", "lighting"],
+      "weight": 6
+    },
+    {
+      "type": "Panel Discussion",
+      "sizes": ["tiny", "small", "medium"],
+      "typicalCategories": ["audio", "video", "lighting", "staging"],
+      "weight": 5
+    },
+    {
+      "type": "Grand Opening",
+      "sizes": ["small", "medium"],
+      "typicalCategories": ["audio", "video", "lighting", "staging", "decor", "power"],
+      "weight": 4
+    }
+  ],
+  "eventSizes": {
+    "tiny": { "attendees": [25, 75], "lineItems": [5, 15], "budget": [2000, 8000] },
+    "small": { "attendees": [75, 200], "lineItems": [15, 35], "budget": [8000, 25000] },
+    "medium": { "attendees": [200, 500], "lineItems": [35, 65], "budget": [25000, 75000] },
+    "large": { "attendees": [500, 2000], "lineItems": [65, 120], "budget": [75000, 200000] },
+    "massive": { "attendees": [2000, 10000], "lineItems": [100, 200], "budget": [200000, 500000] }
+  },
+  "clients": [
+    { "company": "Microsoft Corporation", "contact": "Sarah Chen", "email": "schen@microsoft.com" },
+    { "company": "Apple Inc.", "contact": "Michael Torres", "email": "mtorres@apple.com" },
+    { "company": "Google LLC", "contact": "Emily Rodriguez", "email": "erodriguez@google.com" },
+    { "company": "Amazon Web Services", "contact": "David Kim", "email": "dkim@aws.amazon.com" },
+    { "company": "Tesla Motors", "contact": "Jennifer Walsh", "email": "jwalsh@tesla.com" },
+    { "company": "Netflix Inc.", "contact": "Ryan Murphy", "email": "rmurphy@netflix.com" },
+    { "company": "Salesforce", "contact": "Amanda Brooks", "email": "abrooks@salesforce.com" },
+    { "company": "Oracle Corporation", "contact": "James Patterson", "email": "jpatterson@oracle.com" },
+    { "company": "IBM", "contact": "Michelle Lee", "email": "mlee@ibm.com" },
+    { "company": "Cisco Systems", "contact": "Robert Johnson", "email": "rjohnson@cisco.com" },
+    { "company": "Intel Corporation", "contact": "Lisa Wang", "email": "lwang@intel.com" },
+    { "company": "Adobe Systems", "contact": "Christopher Davis", "email": "cdavis@adobe.com" },
+    { "company": "VMware Inc.", "contact": "Nicole Garcia", "email": "ngarcia@vmware.com" },
+    { "company": "Uber Technologies", "contact": "Brandon Miller", "email": "bmiller@uber.com" },
+    { "company": "Airbnb Inc.", "contact": "Stephanie Wilson", "email": "swilson@airbnb.com" },
+    { "company": "Spotify USA", "contact": "Daniel Anderson", "email": "danderson@spotify.com" },
+    { "company": "Zoom Video Communications", "contact": "Karen Taylor", "email": "ktaylor@zoom.us" },
+    { "company": "Slack Technologies", "contact": "Matthew Brown", "email": "mbrown@slack.com" },
+    { "company": "HubSpot Inc.", "contact": "Rachel Green", "email": "rgreen@hubspot.com" },
+    { "company": "Shopify Inc.", "contact": "Kevin Martin", "email": "kmartin@shopify.com" },
+    { "company": "Kalahari Resorts", "contact": "Carey Brandt", "email": "cbrandt@kalahariresorts.com" },
+    { "company": "H-E-B Grocery", "contact": "Jill Reynolds", "email": "jreynolds@heb.com" },
+    { "company": "Dell Technologies", "contact": "Patricia White", "email": "pwhite@dell.com" },
+    { "company": "Hewlett Packard Enterprise", "contact": "Andrew Clark", "email": "aclark@hpe.com" },
+    { "company": "SAP America", "contact": "Melissa Thompson", "email": "mthompson@sap.com" },
+    { "company": "ServiceNow Inc.", "contact": "Steven Harris", "email": "sharris@servicenow.com" },
+    { "company": "Workday Inc.", "contact": "Laura Martinez", "email": "lmartinez@workday.com" },
+    { "company": "Square Inc.", "contact": "Timothy Scott", "email": "tscott@squareup.com" },
+    { "company": "Twilio Inc.", "contact": "Angela Young", "email": "ayoung@twilio.com" },
+    { "company": "Datadog Inc.", "contact": "Jason Hall", "email": "jhall@datadoghq.com" },
+    { "company": "St. Luke's Episcopal School", "contact": "Margaret Bishop", "email": "mbishop@stlukes.org" },
+    { "company": "Austin Convention Center", "contact": "Frank Rivera", "email": "frivera@austincc.org" },
+    { "company": "Dallas Cowboys", "contact": "William Carter", "email": "wcarter@dallascowboys.com" },
+    { "company": "Houston Rockets", "contact": "Diana Allen", "email": "dallen@rockets.com" },
+    { "company": "San Antonio Spurs", "contact": "George Hernandez", "email": "ghernandez@spurs.com" },
+    { "company": "Texas Medical Association", "contact": "Cynthia Lewis", "email": "clewis@texmed.org" },
+    { "company": "University of Texas", "contact": "Ronald Walker", "email": "rwalker@utexas.edu" },
+    { "company": "Texas State University", "contact": "Betty King", "email": "bking@txstate.edu" },
+    { "company": "Austin Film Society", "contact": "Douglas Wright", "email": "dwright@austinfilm.org" },
+    { "company": "SXSW LLC", "contact": "Sandra Lopez", "email": "slopez@sxsw.com" },
+    { "company": "Goldman Sachs", "contact": "Richard Adams", "email": "radams@gs.com" },
+    { "company": "JPMorgan Chase", "contact": "Catherine Nelson", "email": "cnelson@jpmorgan.com" },
+    { "company": "Bank of America", "contact": "Joseph Hill", "email": "jhill@bofa.com" },
+    { "company": "Deloitte LLP", "contact": "Margaret Moore", "email": "mmoore@deloitte.com" },
+    { "company": "PwC US", "contact": "Donald Jackson", "email": "djackson@pwc.com" },
+    { "company": "Ernst & Young", "contact": "Susan Lee", "email": "slee@ey.com" },
+    { "company": "KPMG US", "contact": "Charles Robinson", "email": "crobinson@kpmg.com" },
+    { "company": "Accenture", "contact": "Dorothy Clark", "email": "dclark@accenture.com" },
+    { "company": "McKinsey & Company", "contact": "Thomas Wright", "email": "twright@mckinsey.com" },
+    { "company": "Boston Consulting Group", "contact": "Nancy Green", "email": "ngreen@bcg.com" }
+  ],
+  "venues": [
+    { "name": "Austin Convention Center", "city": "Austin", "state": "TX", "type": "convention_center" },
+    { "name": "Fairmont Austin", "city": "Austin", "state": "TX", "type": "hotel" },
+    { "name": "JW Marriott Austin", "city": "Austin", "state": "TX", "type": "hotel" },
+    { "name": "Hilton Austin", "city": "Austin", "state": "TX", "type": "hotel" },
+    { "name": "AT&T Center", "city": "San Antonio", "state": "TX", "type": "arena" },
+    { "name": "Henry B. Gonzalez Convention Center", "city": "San Antonio", "state": "TX", "type": "convention_center" },
+    { "name": "Tobin Center for the Performing Arts", "city": "San Antonio", "state": "TX", "type": "theater" },
+    { "name": "Kalahari Resorts", "city": "Round Rock", "state": "TX", "type": "resort" },
+    { "name": "Gaylord Texan Resort", "city": "Grapevine", "state": "TX", "type": "resort" },
+    { "name": "Kay Bailey Hutchison Convention Center", "city": "Dallas", "state": "TX", "type": "convention_center" },
+    { "name": "American Airlines Center", "city": "Dallas", "state": "TX", "type": "arena" },
+    { "name": "AT&T Stadium", "city": "Arlington", "state": "TX", "type": "stadium" },
+    { "name": "George R. Brown Convention Center", "city": "Houston", "state": "TX", "type": "convention_center" },
+    { "name": "Toyota Center", "city": "Houston", "state": "TX", "type": "arena" },
+    { "name": "NRG Stadium", "city": "Houston", "state": "TX", "type": "stadium" },
+    { "name": "Palmer Events Center", "city": "Austin", "state": "TX", "type": "convention_center" },
+    { "name": "Long Center for the Performing Arts", "city": "Austin", "state": "TX", "type": "theater" },
+    { "name": "ACL Live at The Moody Theater", "city": "Austin", "state": "TX", "type": "theater" },
+    { "name": "Bass Concert Hall", "city": "Austin", "state": "TX", "type": "theater" },
+    { "name": "Circuit of the Americas", "city": "Austin", "state": "TX", "type": "outdoor" },
+    { "name": "Zilker Park", "city": "Austin", "state": "TX", "type": "outdoor" },
+    { "name": "St. Luke's Episcopal School", "city": "San Antonio", "state": "TX", "type": "school" },
+    { "name": "Omni Barton Creek Resort", "city": "Austin", "state": "TX", "type": "resort" },
+    { "name": "Hyatt Regency Austin", "city": "Austin", "state": "TX", "type": "hotel" },
+    { "name": "Four Seasons Hotel Austin", "city": "Austin", "state": "TX", "type": "hotel" },
+    { "name": "W Austin Hotel", "city": "Austin", "state": "TX", "type": "hotel" },
+    { "name": "Driskill Hotel", "city": "Austin", "state": "TX", "type": "hotel" },
+    { "name": "Westin Riverwalk San Antonio", "city": "San Antonio", "state": "TX", "type": "hotel" },
+    { "name": "Grand Hyatt San Antonio", "city": "San Antonio", "state": "TX", "type": "hotel" },
+    { "name": "La Cantera Resort & Spa", "city": "San Antonio", "state": "TX", "type": "resort" },
+    { "name": "Marriott Marquis Houston", "city": "Houston", "state": "TX", "type": "hotel" },
+    { "name": "The Worthington Renaissance", "city": "Fort Worth", "state": "TX", "type": "hotel" },
+    { "name": "Fort Worth Convention Center", "city": "Fort Worth", "state": "TX", "type": "convention_center" },
+    { "name": "Will Rogers Memorial Center", "city": "Fort Worth", "state": "TX", "type": "convention_center" },
+    { "name": "Moody Gardens Convention Center", "city": "Galveston", "state": "TX", "type": "convention_center" },
+    { "name": "South Padre Island Convention Centre", "city": "South Padre Island", "state": "TX", "type": "convention_center" },
+    { "name": "El Paso Convention Center", "city": "El Paso", "state": "TX", "type": "convention_center" },
+    { "name": "Lubbock Memorial Civic Center", "city": "Lubbock", "state": "TX", "type": "convention_center" },
+    { "name": "American Bank Center", "city": "Corpus Christi", "state": "TX", "type": "arena" },
+    { "name": "Globe Life Field", "city": "Arlington", "state": "TX", "type": "stadium" }
+  ],
+  "eventNamePatterns": {
+    "Corporate Conference": [
+      "{company} Annual Conference {year}",
+      "{company} Leadership Summit {year}",
+      "{company} Global Meeting {year}",
+      "{company} Strategy Conference",
+      "{company} Innovation Summit",
+      "{company} Partner Summit {year}"
+    ],
+    "Corporate Awards Gala": [
+      "{company} Excellence Awards {year}",
+      "{company} Annual Gala",
+      "{company} Recognition Dinner",
+      "{company} Achievement Awards",
+      "{company} Black Tie Gala {year}"
+    ],
+    "Product Launch": [
+      "{company} Product Launch Event",
+      "{company} {product} Reveal",
+      "{company} Innovation Showcase",
+      "{company} New Product Introduction",
+      "{company} Tech Preview"
+    ],
+    "Trade Show Booth": [
+      "{company} - {tradeshow} Booth",
+      "{company} Exhibition Stand",
+      "{company} Trade Show Display",
+      "{company} Expo Booth {year}"
+    ],
+    "Wedding Reception": [
+      "{lastName} Wedding Reception",
+      "{firstName} & {firstName2} Wedding",
+      "{lastName} - {lastName2} Reception",
+      "The {lastName} Wedding"
+    ],
+    "Concert/Festival": [
+      "{artist} Live at {venue}",
+      "{festival} Music Festival {year}",
+      "{genre} Fest {year}",
+      "Summer Concert Series - {venue}"
+    ],
+    "Hybrid Event/Livestream": [
+      "{company} Virtual Summit {year}",
+      "{company} Hybrid Conference",
+      "{company} Live + Virtual Event",
+      "{company} Global Broadcast"
+    ],
+    "Press Conference": [
+      "{company} Press Announcement",
+      "{company} Media Briefing",
+      "{company} News Conference",
+      "{company} Press Event"
+    ],
+    "Shareholder Meeting": [
+      "{company} Annual Shareholders Meeting {year}",
+      "{company} Investor Day {year}",
+      "{company} Quarterly Meeting"
+    ],
+    "Graduation Ceremony": [
+      "{school} Commencement {year}",
+      "{school} Graduation Ceremony",
+      "{school} Class of {year} Ceremony"
+    ],
+    "Political Rally": [
+      "{candidate} for {office} Rally",
+      "{party} County Convention",
+      "{cause} Rally at {venue}"
+    ],
+    "Fundraiser Gala": [
+      "{charity} Annual Fundraiser",
+      "{cause} Benefit Gala {year}",
+      "{organization} Charity Auction",
+      "Evening of Hope Gala"
+    ],
+    "Fashion Show": [
+      "{designer} Collection Showcase",
+      "{city} Fashion Week {year}",
+      "{brand} Spring/Fall Collection"
+    ],
+    "Town Hall Meeting": [
+      "{company} All-Hands Meeting",
+      "{company} Town Hall Q4 {year}",
+      "{company} Employee Forum"
+    ],
+    "Religious Service": [
+      "{church} Easter Service {year}",
+      "{church} Christmas Celebration",
+      "{organization} Annual Gathering"
+    ],
+    "Esports Tournament": [
+      "{game} Championship {year}",
+      "{league} Finals at {venue}",
+      "{game} Pro Series Event"
+    ],
+    "Film Premiere": [
+      "{film} World Premiere",
+      "{studio} Film Screening",
+      "{festival} Opening Night"
+    ],
+    "Training Seminar": [
+      "{company} Training Workshop",
+      "{topic} Certification Course",
+      "{company} Skills Development"
+    ],
+    "Panel Discussion": [
+      "{topic} Industry Panel",
+      "{company} Expert Roundtable",
+      "{theme} Discussion Forum"
+    ],
+    "Grand Opening": [
+      "{company} Grand Opening",
+      "{company} {location} Launch",
+      "{company} Ribbon Cutting Ceremony"
+    ]
+  },
+  "randomData": {
+    "products": ["Cloud Platform", "Analytics Suite", "Mobile App", "Security Solution", "AI Assistant", "Enterprise Suite", "Developer Tools", "Data Platform"],
+    "tradeshows": ["CES", "SXSW", "RSA Conference", "Dreamforce", "AWS re:Invent", "Google I/O", "Microsoft Ignite", "Oracle OpenWorld"],
+    "firstNames": ["James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda", "David", "Elizabeth", "William", "Barbara", "Richard", "Susan", "Joseph", "Jessica"],
+    "lastNames": ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas"],
+    "artists": ["Taylor Swift", "Ed Sheeran", "The Weeknd", "Bruno Mars", "Lady Gaga", "Post Malone", "Drake", "Beyoncé", "Justin Bieber", "Ariana Grande"],
+    "festivals": ["Austin City Limits", "South by Southwest", "Coachella", "Bonnaroo", "Electric Daisy", "Ultra", "Lollapalooza"],
+    "genres": ["Rock", "Country", "Jazz", "Electronic", "Hip-Hop", "Latin", "Folk", "Blues"],
+    "schools": ["University of Texas", "Texas A&M", "Rice University", "Baylor University", "SMU", "TCU", "Texas Tech", "UT San Antonio"],
+    "charities": ["American Heart Association", "United Way", "Red Cross", "Habitat for Humanity", "Boys & Girls Club", "Make-A-Wish", "Susan G. Komen"],
+    "topics": ["Leadership", "Innovation", "Digital Transformation", "Sustainability", "AI & Machine Learning", "Cybersecurity", "Cloud Computing"],
+    "games": ["League of Legends", "Valorant", "Fortnite", "Call of Duty", "Rocket League", "Overwatch", "CS:GO", "Apex Legends"]
+  },
+  "quoteStatuses": [
+    { "status": "draft", "weight": 35 },
+    { "status": "pending_review", "weight": 15 },
+    { "status": "approved", "weight": 20 },
+    { "status": "sent", "weight": 15 },
+    { "status": "accepted", "weight": 10 },
+    { "status": "revision_requested", "weight": 5 }
+  ]
+}
