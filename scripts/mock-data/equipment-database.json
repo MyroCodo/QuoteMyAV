@@ -1,0 +1,592 @@
+{
+  "audio": {
+    "consoles": [
+      { "name": "Yamaha QL1 Digital Audio Console", "dailyRate": 450, "weeklyRate": 1350 },
+      { "name": "Yamaha QL5 Digital Audio Console", "dailyRate": 650, "weeklyRate": 1950 },
+      { "name": "Yamaha CL5 Digital Audio Console", "dailyRate": 850, "weeklyRate": 2550 },
+      { "name": "Midas M32 Digital Console", "dailyRate": 375, "weeklyRate": 1125 },
+      { "name": "Allen & Heath dLive S5000 Console", "dailyRate": 950, "weeklyRate": 2850 },
+      { "name": "DiGiCo SD12 Digital Console", "dailyRate": 1200, "weeklyRate": 3600 },
+      { "name": "Behringer X32 Digital Mixer", "dailyRate": 175, "weeklyRate": 525 },
+      { "name": "QSC TouchMix-30 Pro Digital Mixer", "dailyRate": 225, "weeklyRate": 675 },
+      { "name": "Soundcraft Vi1 Digital Console", "dailyRate": 550, "weeklyRate": 1650 },
+      { "name": "Avid S6L-24 Digital Console", "dailyRate": 1500, "weeklyRate": 4500 }
+    ],
+    "speakers_line_array": [
+      { "name": "JBL VTX V25-II Line Array Element (per side)", "dailyRate": 850, "weeklyRate": 2550 },
+      { "name": "JBL VRX932LA-1 12\" Line Array Speaker", "dailyRate": 175, "weeklyRate": 525 },
+      { "name": "L-Acoustics KARA II Line Array (per side)", "dailyRate": 1200, "weeklyRate": 3600 },
+      { "name": "d&b audiotechnik E12 Line Array (8-box)", "dailyRate": 2400, "weeklyRate": 7200 },
+      { "name": "Meyer Sound LEOPARD Line Array (per side)", "dailyRate": 1400, "weeklyRate": 4200 },
+      { "name": "QSC KLA12 Active Line Array Module", "dailyRate": 225, "weeklyRate": 675 },
+      { "name": "EAW KF740 Line Array System", "dailyRate": 650, "weeklyRate": 1950 }
+    ],
+    "speakers_powered": [
+      { "name": "JBL PRX815W 15\" Powered Speaker", "dailyRate": 95, "weeklyRate": 285 },
+      { "name": "JBL PRX812W 12\" Powered Speaker", "dailyRate": 85, "weeklyRate": 255 },
+      { "name": "JBL PRX412M 12\" Speaker with Stand", "dailyRate": 65, "weeklyRate": 195 },
+      { "name": "QSC K12.2 12\" Powered Speaker", "dailyRate": 85, "weeklyRate": 255 },
+      { "name": "QSC KW153 15\" 3-Way Powered Speaker", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "Yamaha DZR15 15\" Powered Speaker", "dailyRate": 110, "weeklyRate": 330 },
+      { "name": "EV ELX200-15P 15\" Powered Speaker", "dailyRate": 75, "weeklyRate": 225 },
+      { "name": "Mackie SRM450v3 Powered Speaker", "dailyRate": 55, "weeklyRate": 165 },
+      { "name": "RCF ART 745-A MK4 Active Speaker", "dailyRate": 95, "weeklyRate": 285 }
+    ],
+    "subwoofers": [
+      { "name": "JBL SRX818SP 18\" Powered Subwoofer", "dailyRate": 145, "weeklyRate": 435 },
+      { "name": "JBL VRX918SP 18\" Powered Subwoofer", "dailyRate": 175, "weeklyRate": 525 },
+      { "name": "QSC KS218C Dual 18\" Cardioid Subwoofer", "dailyRate": 225, "weeklyRate": 675 },
+      { "name": "Meyer Sound 1100-LFC Low-Frequency Element", "dailyRate": 350, "weeklyRate": 1050 },
+      { "name": "d&b audiotechnik SL-SUB Subwoofer", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "EV ETX-18SP 18\" Powered Subwoofer", "dailyRate": 135, "weeklyRate": 405 }
+    ],
+    "monitors": [
+      { "name": "JBL PRX412M Stage Monitor", "dailyRate": 55, "weeklyRate": 165 },
+      { "name": "QSC K10.2 Stage Monitor", "dailyRate": 75, "weeklyRate": 225 },
+      { "name": "Yamaha DXR10mkII Stage Monitor", "dailyRate": 85, "weeklyRate": 255 },
+      { "name": "EAW JFX-100 Stage Monitor", "dailyRate": 95, "weeklyRate": 285 },
+      { "name": "Mackie SRM350v3 Stage Monitor", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "d&b audiotechnik M4 Stage Monitor", "dailyRate": 175, "weeklyRate": 525 }
+    ],
+    "wireless_microphones": [
+      { "name": "Shure ULXD4D Dual Wireless System (Handheld)", "dailyRate": 185, "weeklyRate": 555 },
+      { "name": "Shure ULXD4Q Quad Wireless System", "dailyRate": 325, "weeklyRate": 975 },
+      { "name": "Shure Axient Digital AD4D Dual System", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Sennheiser EW 500 G4 Wireless Handheld", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "Sennheiser Digital 6000 Wireless System", "dailyRate": 350, "weeklyRate": 1050 },
+      { "name": "Audio-Technica ATW-5000 Series Wireless", "dailyRate": 195, "weeklyRate": 585 },
+      { "name": "Shure BLX24/SM58 Wireless Handheld", "dailyRate": 65, "weeklyRate": 195 }
+    ],
+    "wireless_lavaliers": [
+      { "name": "Shure ULXD1 Bodypack with WL185 Lavalier", "dailyRate": 95, "weeklyRate": 285 },
+      { "name": "Sennheiser EW 500 G4-MKE2 Lavalier System", "dailyRate": 115, "weeklyRate": 345 },
+      { "name": "Shure Axient Digital AD1 Bodypack w/Lav", "dailyRate": 145, "weeklyRate": 435 },
+      { "name": "Countryman B3 Lavalier with Shure ULXD1", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "DPA 4061 Lavalier with Sennheiser Bodypack", "dailyRate": 155, "weeklyRate": 465 }
+    ],
+    "wired_microphones": [
+      { "name": "Shure SM58 Dynamic Vocal Microphone", "dailyRate": 15, "weeklyRate": 45 },
+      { "name": "Shure SM57 Instrument Microphone", "dailyRate": 15, "weeklyRate": 45 },
+      { "name": "Shure Beta 58A Dynamic Microphone", "dailyRate": 25, "weeklyRate": 75 },
+      { "name": "Sennheiser e935 Vocal Microphone", "dailyRate": 25, "weeklyRate": 75 },
+      { "name": "Shure SM81 Condenser Microphone", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Neumann KMS 105 Vocal Condenser", "dailyRate": 65, "weeklyRate": 195 },
+      { "name": "AKG C414 XLS Condenser Microphone", "dailyRate": 55, "weeklyRate": 165 }
+    ],
+    "gooseneck_microphones": [
+      { "name": "Shure MX418/S 18\" Gooseneck Microphone", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "Shure MX412/S 12\" Gooseneck Microphone", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "Audio-Technica U857QL Gooseneck", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Sennheiser MEG 14-40 Gooseneck", "dailyRate": 55, "weeklyRate": 165 }
+    ],
+    "amplifiers": [
+      { "name": "Crown XTi 4002 Power Amplifier", "dailyRate": 75, "weeklyRate": 225 },
+      { "name": "Crown XTi 6002 Power Amplifier", "dailyRate": 95, "weeklyRate": 285 },
+      { "name": "QSC PLD4.5 Power Amplifier", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "Lab.gruppen PLM 20K44 Amplifier", "dailyRate": 225, "weeklyRate": 675 },
+      { "name": "Powersoft X4 Amplifier Platform", "dailyRate": 275, "weeklyRate": 825 }
+    ],
+    "di_boxes": [
+      { "name": "Radial JDI Passive DI Box", "dailyRate": 15, "weeklyRate": 45 },
+      { "name": "Radial J48 Active DI Box", "dailyRate": 20, "weeklyRate": 60 },
+      { "name": "Whirlwind PCDI Computer Audio Interface", "dailyRate": 25, "weeklyRate": 75 },
+      { "name": "Countryman Type 85 Active DI", "dailyRate": 25, "weeklyRate": 75 },
+      { "name": "BSS AR-133 Active DI Box", "dailyRate": 20, "weeklyRate": 60 }
+    ],
+    "snakes": [
+      { "name": "Whirlwind 16x4 150' XLR Audio Snake", "dailyRate": 85, "weeklyRate": 255 },
+      { "name": "Whirlwind 24x8 200' Audio Snake", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "Yamaha RIO3224-D Digital Snake", "dailyRate": 350, "weeklyRate": 1050 },
+      { "name": "Yamaha RIO1608-D Digital Snake", "dailyRate": 250, "weeklyRate": 750 },
+      { "name": "Allen & Heath DX168 Digital Stage Box", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Lex 100M Ethercon Digital Snake", "dailyRate": 65, "weeklyRate": 195 }
+    ],
+    "press_mult": [
+      { "name": "Whirlwind PressPower 2 Active Press Box 16CH", "dailyRate": 95, "weeklyRate": 285 },
+      { "name": "Whirlwind Presspower Active 12CH Press Mult", "dailyRate": 75, "weeklyRate": 225 },
+      { "name": "ATI MLA-800 8CH Distribution Amplifier", "dailyRate": 55, "weeklyRate": 165 }
+    ],
+    "misc": [
+      { "name": "Tripod Microphone Stand w/ Boom", "dailyRate": 8, "weeklyRate": 24 },
+      { "name": "Round Base Microphone Stand", "dailyRate": 6, "weeklyRate": 18 },
+      { "name": "Short Microphone Stand (Table)", "dailyRate": 5, "weeklyRate": 15 },
+      { "name": "Speaker Stand (Ultimate Support)", "dailyRate": 12, "weeklyRate": 36 },
+      { "name": "Speaker Stand Skirt (Black)", "dailyRate": 8, "weeklyRate": 24 },
+      { "name": "Headphones (Sony MDR-7506)", "dailyRate": 15, "weeklyRate": 45 },
+      { "name": "Switchcraft 318 Mini AudioStix Adapter", "dailyRate": 25, "weeklyRate": 75 }
+    ]
+  },
+  "video": {
+    "projectors": [
+      { "name": "Epson Pro L12000Q 12K Laser Projector", "dailyRate": 750, "weeklyRate": 2250 },
+      { "name": "Epson Pro L25000U 25K Laser Projector", "dailyRate": 1200, "weeklyRate": 3600 },
+      { "name": "Christie LWU701i 3LCD Projector", "dailyRate": 325, "weeklyRate": 975 },
+      { "name": "Christie LWU502 5000 Lumen Projector", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Barco G62-W14 14K Laser Projector", "dailyRate": 950, "weeklyRate": 2850 },
+      { "name": "Panasonic PT-RZ120 12K Laser Projector", "dailyRate": 650, "weeklyRate": 1950 },
+      { "name": "NEC NP-PA1004UL 10K Laser Projector", "dailyRate": 550, "weeklyRate": 1650 },
+      { "name": "Sony VPL-FHZ90L 9K Laser Projector", "dailyRate": 475, "weeklyRate": 1425 }
+    ],
+    "projector_lenses": [
+      { "name": "Christie 0.67:1 HD Short Throw Lens", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "Christie 1.2-1.5:1 HD Zoom Lens", "dailyRate": 95, "weeklyRate": 285 },
+      { "name": "Barco 1.7-2.9:1 Medium Throw Lens", "dailyRate": 115, "weeklyRate": 345 },
+      { "name": "Epson ELPLM15 Middle Throw Zoom Lens", "dailyRate": 85, "weeklyRate": 255 },
+      { "name": "Panasonic ET-DLE060 0.6:1 Fixed Lens", "dailyRate": 145, "weeklyRate": 435 }
+    ],
+    "screens": [
+      { "name": "Stumpfl 9' x 16' Monoblox Screen w/Dress Kit", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Stumpfl 11.3' x 20' Monoblox Screen w/Dress Kit", "dailyRate": 375, "weeklyRate": 1125 },
+      { "name": "Stumpfl 13.5' x 24' Monoblox Screen w/Dress Kit", "dailyRate": 475, "weeklyRate": 1425 },
+      { "name": "Draper 9' x 12' Tripod Projection Screen", "dailyRate": 65, "weeklyRate": 195 },
+      { "name": "Da-Lite 10' x 17' Fast-Fold Screen", "dailyRate": 225, "weeklyRate": 675 },
+      { "name": "Draper 12' x 21' Ultimate Folding Screen", "dailyRate": 325, "weeklyRate": 975 }
+    ],
+    "led_walls": [
+      { "name": "Absen A3 Pro LED Panel (6-Pack) 2.97mm", "dailyRate": 850, "weeklyRate": 2550 },
+      { "name": "Absen PL2.5 Pro LED Panel Kit (per panel)", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "ROE Visual Black Pearl BP2 LED Panel", "dailyRate": 145, "weeklyRate": 435 },
+      { "name": "Unilumin UpadIII 2.6mm LED Panel", "dailyRate": 115, "weeklyRate": 345 },
+      { "name": "Leyard VVR1.9 LED Video Wall Panel", "dailyRate": 165, "weeklyRate": 495 },
+      { "name": "LED Panel Control Kit (0-60 Panels)", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "LED Panel Hanging Bar Kit", "dailyRate": 45, "weeklyRate": 135 }
+    ],
+    "monitors_displays": [
+      { "name": "Samsung 43\" 4K LED Monitor", "dailyRate": 85, "weeklyRate": 255 },
+      { "name": "Samsung 55\" 4K LED Monitor with Stand", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "Samsung 65\" 4K QLED Monitor with Stand", "dailyRate": 175, "weeklyRate": 525 },
+      { "name": "Samsung 75\" 4K LED Display with Stand", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "LG 82\" 4K Commercial Display", "dailyRate": 375, "weeklyRate": 1125 },
+      { "name": "Sharp 42\" LED 1080p Confidence Monitor", "dailyRate": 55, "weeklyRate": 165 },
+      { "name": "ASUS 24\" LED Computer Monitor", "dailyRate": 35, "weeklyRate": 105 }
+    ],
+    "monitor_stands": [
+      { "name": "Monitor Stand Chrome Poles 6' (32\"-55\")", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "Monitor Stand Chrome Poles 7' (65\"-82\")", "dailyRate": 55, "weeklyRate": 165 },
+      { "name": "Monitor Floor Stand Heavy Duty", "dailyRate": 65, "weeklyRate": 195 },
+      { "name": "Dual Monitor Cart Mobile Stand", "dailyRate": 85, "weeklyRate": 255 }
+    ],
+    "cameras": [
+      { "name": "Sony HXC-100 HD Broadcast Camera Kit", "dailyRate": 650, "weeklyRate": 1950 },
+      { "name": "Sony BRC-X400 IP 4K PTZ Camera Kit", "dailyRate": 425, "weeklyRate": 1275 },
+      { "name": "Sony BRC-H900 HD PTZ Camera System", "dailyRate": 375, "weeklyRate": 1125 },
+      { "name": "Canon XF705 4K Camcorder", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Panasonic AW-UE150 4K PTZ Camera", "dailyRate": 395, "weeklyRate": 1185 },
+      { "name": "PTZ Optics 30X NDI Camera", "dailyRate": 195, "weeklyRate": 585 },
+      { "name": "Canon 86x HD Broadcast Lens", "dailyRate": 325, "weeklyRate": 975 },
+      { "name": "Fujinon 17x7.6 HD Camera Lens", "dailyRate": 275, "weeklyRate": 825 }
+    ],
+    "camera_support": [
+      { "name": "Vinten Vision 250 Tripod System", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "Manfrotto 546B Tripod w/504HD Head", "dailyRate": 75, "weeklyRate": 225 },
+      { "name": "Sachtler FSB 8 Tripod System", "dailyRate": 95, "weeklyRate": 285 },
+      { "name": "PTZ Camera Controller RM-IP10", "dailyRate": 85, "weeklyRate": 255 },
+      { "name": "Sony Triax 328' (100M) CCU Cable", "dailyRate": 65, "weeklyRate": 195 }
+    ],
+    "switchers": [
+      { "name": "Roland VR-50HD MK II Multi-Format Switcher", "dailyRate": 375, "weeklyRate": 1125 },
+      { "name": "Blackmagic ATEM 1 M/E 4K Switcher", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Blackmagic ATEM 2 M/E 8K Constellation Switcher", "dailyRate": 650, "weeklyRate": 1950 },
+      { "name": "Blackmagic ATEM Mini Extreme ISO", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "Ross Carbonite Black Solo Switcher", "dailyRate": 475, "weeklyRate": 1425 },
+      { "name": "FOR-A HVS-110 HD Switcher", "dailyRate": 395, "weeklyRate": 1185 }
+    ],
+    "recording": [
+      { "name": "Blackmagic HyperDeck Studio 4K Pro", "dailyRate": 175, "weeklyRate": 525 },
+      { "name": "Atomos Shogun Studio 4K Recorder", "dailyRate": 225, "weeklyRate": 675 },
+      { "name": "Epiphan Pearl Nano All-in-One Recorder", "dailyRate": 295, "weeklyRate": 885 },
+      { "name": "AJA Ki Pro Ultra 12G 4K Recorder", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Sony DVCam HVR-1500A Record Deck", "dailyRate": 125, "weeklyRate": 375 }
+    ],
+    "playback": [
+      { "name": "Lenovo P15 Gen 2 Laptop (ProPresenter)", "dailyRate": 175, "weeklyRate": 525 },
+      { "name": "MacBook Pro 16\" M3 (Playback Pro)", "dailyRate": 195, "weeklyRate": 585 },
+      { "name": "Dell Alienware X16 R2 Laptop", "dailyRate": 165, "weeklyRate": 495 },
+      { "name": "4K Media Digital Signage Player", "dailyRate": 55, "weeklyRate": 165 },
+      { "name": "BrightSign XT1144 4K Player", "dailyRate": 45, "weeklyRate": 135 }
+    ],
+    "streaming": [
+      { "name": "Teradek Cube 755 HEVC Encoder", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Teradek VidiU Go Streaming Device", "dailyRate": 145, "weeklyRate": 435 },
+      { "name": "LiveU LU600 HEVC Bonding Encoder", "dailyRate": 495, "weeklyRate": 1485 },
+      { "name": "AJA HELO Plus Streaming Recorder", "dailyRate": 195, "weeklyRate": 585 }
+    ]
+  },
+  "signal": {
+    "converters": [
+      { "name": "Decimator MD-HX HDMI/SDI Cross Converter", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Decimator MD-LX HDMI/SDI Mini Converter", "dailyRate": 25, "weeklyRate": 75 },
+      { "name": "AJA Hi5-4K 4K SDI to HDMI Converter", "dailyRate": 65, "weeklyRate": 195 },
+      { "name": "AJA HA5 HDMI to SDI Converter", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "Blackmagic SDI to HDMI 6G Converter", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Blackmagic HDMI to SDI 6G Converter", "dailyRate": 35, "weeklyRate": 105 }
+    ],
+    "scalers": [
+      { "name": "Analog Way Pulse 4K Scaler", "dailyRate": 295, "weeklyRate": 885 },
+      { "name": "Barco ImagePRO-4K Scaler", "dailyRate": 375, "weeklyRate": 1125 },
+      { "name": "TV One CORIOmaster Processor", "dailyRate": 475, "weeklyRate": 1425 },
+      { "name": "Extron DSC 301 HD Video Scaler", "dailyRate": 125, "weeklyRate": 375 }
+    ],
+    "distribution": [
+      { "name": "Blackmagic SDI 1x8 Distribution Amp", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "Blackmagic HDMI 1x4 Distribution Amp", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Kramer VM-4HDT HDMI 1:4 DA", "dailyRate": 55, "weeklyRate": 165 },
+      { "name": "AJA HA5-4K HDMI to SDI Mini-Converter", "dailyRate": 75, "weeklyRate": 225 }
+    ],
+    "matrix_routers": [
+      { "name": "Blackmagic Smart Videohub 12x12", "dailyRate": 145, "weeklyRate": 435 },
+      { "name": "Blackmagic Smart Videohub 20x20", "dailyRate": 225, "weeklyRate": 675 },
+      { "name": "Lightware MX2-8x8-HDMI20 Matrix", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Kramer VS-88H2 8x8 HDMI Matrix", "dailyRate": 195, "weeklyRate": 585 }
+    ],
+    "extenders": [
+      { "name": "AJA FiDO 4-Channel SDI to Fiber Kit", "dailyRate": 175, "weeklyRate": 525 },
+      { "name": "Blackmagic Micro Converter BiDirect SDI/HDMI", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Kramer TP-580TXR HDBaseT Transmitter", "dailyRate": 65, "weeklyRate": 195 },
+      { "name": "Kramer TP-580RXR HDBaseT Receiver", "dailyRate": 65, "weeklyRate": 195 }
+    ],
+    "sync_generators": [
+      { "name": "Link Electronics HDG-821 Master Sync Generator", "dailyRate": 85, "weeklyRate": 255 },
+      { "name": "AJA GEN10 HD/SD Sync Generator", "dailyRate": 95, "weeklyRate": 285 },
+      { "name": "Blackmagic Sync Generator", "dailyRate": 55, "weeklyRate": 165 }
+    ]
+  },
+  "lighting": {
+    "moving_lights_profile": [
+      { "name": "Martin MAC Quantum Profile (2-Pack)", "dailyRate": 475, "weeklyRate": 1425 },
+      { "name": "Elation Artiste Picasso Moving Light (2-Pack)", "dailyRate": 425, "weeklyRate": 1275 },
+      { "name": "Robe BMFL Spot Moving Light", "dailyRate": 295, "weeklyRate": 885 },
+      { "name": "Clay Paky Sharpy Plus Moving Light", "dailyRate": 225, "weeklyRate": 675 },
+      { "name": "High End Systems SolaFrame 3000", "dailyRate": 375, "weeklyRate": 1125 }
+    ],
+    "moving_lights_wash": [
+      { "name": "Martin MAC Aura LED Wash (6-Pack)", "dailyRate": 550, "weeklyRate": 1650 },
+      { "name": "Robe Robin 600 LED Wash", "dailyRate": 175, "weeklyRate": 525 },
+      { "name": "Chauvet Maverick MK3 Wash", "dailyRate": 145, "weeklyRate": 435 },
+      { "name": "Elation Fuze Wash 500 FR", "dailyRate": 165, "weeklyRate": 495 }
+    ],
+    "ellipsoidals": [
+      { "name": "ETC Source Four LED Series 2 Lustr", "dailyRate": 75, "weeklyRate": 225 },
+      { "name": "ETC Source Four 750W w/36 Degree Lens", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Chauvet Ovation E-910FC LED Ellipsoidal", "dailyRate": 85, "weeklyRate": 255 },
+      { "name": "Chauvet Ovation LED Ellipsoidal 19 Degree", "dailyRate": 65, "weeklyRate": 195 },
+      { "name": "Chauvet Ovation LED Ellipsoidal 36 Degree", "dailyRate": 65, "weeklyRate": 195 }
+    ],
+    "led_pars": [
+      { "name": "Chauvet Freedom Par Hex-4 Battery LED (8-Pack)", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Chauvet SlimPAR 64 RGBA LED (per unit)", "dailyRate": 25, "weeklyRate": 75 },
+      { "name": "ADJ WiFly PAR RGBA Battery Wireless", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Coemar LED Floor Par Light", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "ETC ColorSource PAR LED", "dailyRate": 45, "weeklyRate": 135 }
+    ],
+    "cyc_strip": [
+      { "name": "Chauvet COLORado Panel Q40 (4-Pack)", "dailyRate": 325, "weeklyRate": 975 },
+      { "name": "Chauvet LED Cyc Light (4-Pack)", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "ETC ColorSource Linear 4 Deep Blue", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "Elation SixBar 1000 LED Strip", "dailyRate": 85, "weeklyRate": 255 }
+    ],
+    "followspots": [
+      { "name": "Lycian SuperArc 400 Followspot", "dailyRate": 195, "weeklyRate": 585 },
+      { "name": "Robert Juliat Korrigan LED Followspot", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Strong Gladiator III Followspot", "dailyRate": 225, "weeklyRate": 675 }
+    ],
+    "consoles": [
+      { "name": "High End Systems Hedgehog FOH Kit", "dailyRate": 375, "weeklyRate": 1125 },
+      { "name": "MA Lighting grandMA3 Compact XT", "dailyRate": 650, "weeklyRate": 1950 },
+      { "name": "ETC Ion XE 20 Console", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Leprecon LP612 DMX Light Board", "dailyRate": 75, "weeklyRate": 225 },
+      { "name": "Chauvet DJ Obey 70 DMX Controller", "dailyRate": 45, "weeklyRate": 135 }
+    ],
+    "dmx_accessories": [
+      { "name": "Elation DMX Splitter 1 In 4 Out (3/5 pin)", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Wireless DMX Transmitter/Receiver Set", "dailyRate": 75, "weeklyRate": 225 },
+      { "name": "DMX 5-Pin Cable 100'", "dailyRate": 12, "weeklyRate": 36 },
+      { "name": "DMX 5-Pin Cable 50'", "dailyRate": 8, "weeklyRate": 24 },
+      { "name": "DMX 5-Pin Cable 25'", "dailyRate": 5, "weeklyRate": 15 }
+    ],
+    "effects": [
+      { "name": "Chauvet Geyser RGB Fogger", "dailyRate": 95, "weeklyRate": 285 },
+      { "name": "Look Solutions Unique 2.1 Hazer", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "MDG ATMe Haze Generator", "dailyRate": 195, "weeklyRate": 585 },
+      { "name": "Confetti Cannon (Single Shot)", "dailyRate": 75, "weeklyRate": 225 }
+    ]
+  },
+  "staging": {
+    "stage_decks": [
+      { "name": "Biljax 4' x 4' Stage Deck", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Biljax 4' x 8' Stage Deck", "dailyRate": 55, "weeklyRate": 165 },
+      { "name": "Biljax 8' x 12' Riser w/Stairs", "dailyRate": 225, "weeklyRate": 675 },
+      { "name": "Biljax 12' x 12' Riser w/Stairs", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "Biljax 12' x 24' Riser w/Stairs (Main Stage)", "dailyRate": 475, "weeklyRate": 1425 },
+      { "name": "Biljax 4' x 16' Riser w/Stairs (Press)", "dailyRate": 175, "weeklyRate": 525 },
+      { "name": "Biljax Stage Leg 16\" (per set)", "dailyRate": 15, "weeklyRate": 45 },
+      { "name": "Biljax Stage Leg 24\" (per set)", "dailyRate": 18, "weeklyRate": 54 },
+      { "name": "Biljax Stage Leg 32\" (per set)", "dailyRate": 22, "weeklyRate": 66 },
+      { "name": "Biljax Ultra Stairs 4-Step w/Rails", "dailyRate": 65, "weeklyRate": 195 }
+    ],
+    "stage_accessories": [
+      { "name": "Stage Skirt 8' x 24\" Black", "dailyRate": 15, "weeklyRate": 45 },
+      { "name": "Stage Skirt 8' x 30\" Black", "dailyRate": 18, "weeklyRate": 54 },
+      { "name": "Stage Carpet 12' x 24' Black", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "ADA Wheelchair Ramp Section", "dailyRate": 85, "weeklyRate": 255 },
+      { "name": "Crowd Barrier Section 8'", "dailyRate": 25, "weeklyRate": 75 }
+    ],
+    "lecterns": [
+      { "name": "Acrylic Lectern with Silver Trim Kit", "dailyRate": 95, "weeklyRate": 285 },
+      { "name": "AmpliVox SN3080 Clear Acrylic Lectern", "dailyRate": 115, "weeklyRate": 345 },
+      { "name": "Wood Veneer Presidential Lectern", "dailyRate": 135, "weeklyRate": 405 },
+      { "name": "Portable Tabletop Lectern", "dailyRate": 45, "weeklyRate": 135 }
+    ],
+    "furniture": [
+      { "name": "6' Folding Table Black", "dailyRate": 15, "weeklyRate": 45 },
+      { "name": "8' Folding Table Black", "dailyRate": 18, "weeklyRate": 54 },
+      { "name": "Cocktail Table 30\" Round", "dailyRate": 12, "weeklyRate": 36 },
+      { "name": "Folding Chair Padded Black", "dailyRate": 4, "weeklyRate": 12 },
+      { "name": "Director's Chair Black", "dailyRate": 8, "weeklyRate": 24 },
+      { "name": "Stool 30\" Black", "dailyRate": 6, "weeklyRate": 18 }
+    ]
+  },
+  "rigging": {
+    "truss": [
+      { "name": "Xtreme 12\"x18\" x 10' GP Truss w/Bolts", "dailyRate": 55, "weeklyRate": 165 },
+      { "name": "Xtreme 12\"x18\" x 8' GP Truss", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "Xtreme 12\"x18\" x 5' GP Truss", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Xtreme 12\"x18\" x 2' GP Truss", "dailyRate": 25, "weeklyRate": 75 },
+      { "name": "James Thomas 12\"x18\" x 10' GP Truss", "dailyRate": 65, "weeklyRate": 195 },
+      { "name": "12\"x18\" 4-Way Truss Corner Block", "dailyRate": 75, "weeklyRate": 225 },
+      { "name": "12\"x18\" 6-Way Truss Corner Block", "dailyRate": 95, "weeklyRate": 285 },
+      { "name": "Xtreme Baseplate for Truss (Steel)", "dailyRate": 25, "weeklyRate": 75 }
+    ],
+    "chain_hoists": [
+      { "name": "CM Lodestar 1-Ton Chain Motor", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "CM 7-Pin 1-Ton 3-Phase Chain Motor", "dailyRate": 145, "weeklyRate": 435 },
+      { "name": "8-Way Motor Control Kit", "dailyRate": 175, "weeklyRate": 525 },
+      { "name": "12-Way Motor Control Kit", "dailyRate": 225, "weeklyRate": 675 }
+    ],
+    "ground_support": [
+      { "name": "Genie ST25 25' Supertower Stand", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "10' Steel Light Tree Pole", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "8' Steel Light Tree Pole", "dailyRate": 28, "weeklyRate": 84 },
+      { "name": "2' Steel Light Tree Pole", "dailyRate": 12, "weeklyRate": 36 },
+      { "name": "Scaffolding 8' Projection Tower", "dailyRate": 175, "weeklyRate": 525 }
+    ],
+    "hardware": [
+      { "name": "Shackle 3/8\" Screw Pin", "dailyRate": 3, "weeklyRate": 9 },
+      { "name": "Shackle 5/8\" Screw Pin", "dailyRate": 5, "weeklyRate": 15 },
+      { "name": "Safety Chain Black 30\"", "dailyRate": 4, "weeklyRate": 12 },
+      { "name": "Cheeseborough Double Swivel Clamp", "dailyRate": 6, "weeklyRate": 18 },
+      { "name": "Batten Clamp with Eye Bolt", "dailyRate": 8, "weeklyRate": 24 },
+      { "name": "1/8\" Wire Rope 10' with Slider", "dailyRate": 12, "weeklyRate": 36 },
+      { "name": "Sandbag 25 lbs", "dailyRate": 5, "weeklyRate": 15 },
+      { "name": "Sandbag 35 lbs", "dailyRate": 6, "weeklyRate": 18 },
+      { "name": "Truss Bolts Set (12 bolts)", "dailyRate": 8, "weeklyRate": 24 }
+    ]
+  },
+  "decor": {
+    "pipe_drape": [
+      { "name": "Drape Black Velour 13'W x 16'H", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "Drape Black Velour 10'W x 16'H", "dailyRate": 38, "weeklyRate": 114 },
+      { "name": "Drape Black Velour 26'H x 10'W (Lace-On)", "dailyRate": 65, "weeklyRate": 195 },
+      { "name": "Drape Gray Velour 15'W x 16'H", "dailyRate": 48, "weeklyRate": 144 },
+      { "name": "Drape White Sheer 10'W x 10'H", "dailyRate": 25, "weeklyRate": 75 },
+      { "name": "10' Section Pipe and Drape Black", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "20' Section Pipe and Drape HW", "dailyRate": 55, "weeklyRate": 165 },
+      { "name": "30' Section Pipe and Drape HW", "dailyRate": 75, "weeklyRate": 225 },
+      { "name": "Pipe & Drape 9'-16' Upright", "dailyRate": 15, "weeklyRate": 45 },
+      { "name": "Pipe & Drape 7'-12' Crossbar", "dailyRate": 12, "weeklyRate": 36 },
+      { "name": "Pipe & Drape Baseplate 35lbs", "dailyRate": 8, "weeklyRate": 24 }
+    ],
+    "backdrops": [
+      { "name": "20' Courtesy Drape Kit w/3'-5' Crossbar", "dailyRate": 85, "weeklyRate": 255 },
+      { "name": "Black Commando Cloth/Duvetyne (per yard)", "dailyRate": 8, "weeklyRate": 24 },
+      { "name": "Spandex Backdrop 10' x 20' White", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "Custom Printed Backdrop 10' x 8'", "dailyRate": 175, "weeklyRate": 525 }
+    ],
+    "specialty": [
+      { "name": "4' Moon Balloon Kit w/Stand", "dailyRate": 145, "weeklyRate": 435 },
+      { "name": "Festoon String Lighting 48' Section", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Red Carpet Runner 4' x 25'", "dailyRate": 45, "weeklyRate": 135 }
+    ]
+  },
+  "cables": {
+    "audio_xlr": [
+      { "name": "XLR Cable 10'", "dailyRate": 3, "weeklyRate": 9 },
+      { "name": "XLR Cable 25'", "dailyRate": 4, "weeklyRate": 12 },
+      { "name": "XLR Cable 50'", "dailyRate": 6, "weeklyRate": 18 },
+      { "name": "XLR Cable 100'", "dailyRate": 10, "weeklyRate": 30 }
+    ],
+    "audio_nl4": [
+      { "name": "NL4 Speaker Cable 25'", "dailyRate": 5, "weeklyRate": 15 },
+      { "name": "NL4 Speaker Cable 50'", "dailyRate": 8, "weeklyRate": 24 },
+      { "name": "NL4 Speaker Cable 100'", "dailyRate": 12, "weeklyRate": 36 },
+      { "name": "NL4 Barrel Coupler", "dailyRate": 2, "weeklyRate": 6 }
+    ],
+    "video_hdmi": [
+      { "name": "HDMI Cable 6'", "dailyRate": 3, "weeklyRate": 9 },
+      { "name": "HDMI Cable 10'", "dailyRate": 4, "weeklyRate": 12 },
+      { "name": "HDMI Cable 25'", "dailyRate": 6, "weeklyRate": 18 },
+      { "name": "HDMI Cable 50'", "dailyRate": 10, "weeklyRate": 30 },
+      { "name": "HDMI Cable 100'", "dailyRate": 18, "weeklyRate": 54 }
+    ],
+    "video_sdi": [
+      { "name": "HD/SDI Cable 10'", "dailyRate": 4, "weeklyRate": 12 },
+      { "name": "HD/SDI Cable 25'", "dailyRate": 6, "weeklyRate": 18 },
+      { "name": "HD/SDI Cable 50'", "dailyRate": 10, "weeklyRate": 30 },
+      { "name": "HD/SDI Cable 100'", "dailyRate": 15, "weeklyRate": 45 },
+      { "name": "HD/SDI Cable 200'", "dailyRate": 25, "weeklyRate": 75 },
+      { "name": "HD/SDI Cable 250' on Reel", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "BNC Barrel Adapter", "dailyRate": 2, "weeklyRate": 6 }
+    ],
+    "network": [
+      { "name": "CAT6 Cable 25'", "dailyRate": 4, "weeklyRate": 12 },
+      { "name": "CAT6 Cable 100'", "dailyRate": 8, "weeklyRate": 24 },
+      { "name": "CAT6 Cable 250' on Reel", "dailyRate": 18, "weeklyRate": 54 },
+      { "name": "Ethercon Cable 100'", "dailyRate": 15, "weeklyRate": 45 }
+    ]
+  },
+  "power": {
+    "distros": [
+      { "name": "Lex Lighting Power Distro", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "Lex Large L21-30 / Socapex Power Distro", "dailyRate": 175, "weeklyRate": 525 },
+      { "name": "Lex Medium (12) L21-30 / (6) Edison Distro", "dailyRate": 145, "weeklyRate": 435 },
+      { "name": "Lex Viceroy 19-Pin / L21-30 Power Distro", "dailyRate": 165, "weeklyRate": 495 },
+      { "name": "Lex Bento Box L21-30 to Edison Distro", "dailyRate": 55, "weeklyRate": 165 },
+      { "name": "Lex L21-30 Projector Power Box (208V)", "dailyRate": 65, "weeklyRate": 195 },
+      { "name": "Motion Labs 200 AMP Power Distro", "dailyRate": 225, "weeklyRate": 675 },
+      { "name": "Power Stringer 30 AMP Motion Labs", "dailyRate": 45, "weeklyRate": 135 }
+    ],
+    "feeder": [
+      { "name": "50' 2/0 Feeder Cable 5-Wire", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "100' 2/0 Feeder Cable 5-Wire", "dailyRate": 75, "weeklyRate": 225 },
+      { "name": "Feeder Tails 2/0 AWG 5-Wire Set", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Camlock Male Turnaround (Green)", "dailyRate": 15, "weeklyRate": 45 },
+      { "name": "Camlock Male Turnaround (White)", "dailyRate": 15, "weeklyRate": 45 }
+    ],
+    "208v": [
+      { "name": "Power Cable 208V L14-30 10'", "dailyRate": 8, "weeklyRate": 24 },
+      { "name": "Power Cable 208V L14-30 25'", "dailyRate": 12, "weeklyRate": 36 },
+      { "name": "Power Cable 208V L14-30 50'", "dailyRate": 18, "weeklyRate": 54 },
+      { "name": "Power Cable 208V L14-30 100'", "dailyRate": 28, "weeklyRate": 84 },
+      { "name": "Power Cable 208V L21-30 50'", "dailyRate": 22, "weeklyRate": 66 },
+      { "name": "Power Cable 208V L21-30 100'", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "208V L14-30 to Quad Box Edison", "dailyRate": 25, "weeklyRate": 75 }
+    ],
+    "110v": [
+      { "name": "120V Edison Cable 10'", "dailyRate": 3, "weeklyRate": 9 },
+      { "name": "120V Edison Cable 25'", "dailyRate": 5, "weeklyRate": 15 },
+      { "name": "120V Edison Cable 50'", "dailyRate": 8, "weeklyRate": 24 },
+      { "name": "120V Edison Cable 100'", "dailyRate": 12, "weeklyRate": 36 },
+      { "name": "8 Outlet Power Strip", "dailyRate": 5, "weeklyRate": 15 },
+      { "name": "Cube Tap 110V 1(M) to 3(F)", "dailyRate": 2, "weeklyRate": 6 },
+      { "name": "Edison Quad Box", "dailyRate": 8, "weeklyRate": 24 }
+    ],
+    "accessories": [
+      { "name": "Guard Dog 5-Channel Cable Protector 3'", "dailyRate": 12, "weeklyRate": 36 },
+      { "name": "Yellow Jacket Cable Protector 3'", "dailyRate": 10, "weeklyRate": 30 },
+      { "name": "Rubber Matting 6'", "dailyRate": 8, "weeklyRate": 24 },
+      { "name": "Rubber Matting 3'", "dailyRate": 5, "weeklyRate": 15 },
+      { "name": "Staging Cable Ramp Indoor (Red)", "dailyRate": 15, "weeklyRate": 45 }
+    ],
+    "generators": [
+      { "name": "25KW Diesel Generator", "dailyRate": 350, "weeklyRate": 1050 },
+      { "name": "50KW Diesel Generator", "dailyRate": 550, "weeklyRate": 1650 },
+      { "name": "100KW Diesel Generator", "dailyRate": 850, "weeklyRate": 2550 },
+      { "name": "200KW Diesel Generator", "dailyRate": 1250, "weeklyRate": 3750 }
+    ]
+  },
+  "comms": {
+    "intercom": [
+      { "name": "Clear-Com FreeSpeak II Base w/5 Beltpacks", "dailyRate": 475, "weeklyRate": 1425 },
+      { "name": "Clear-Com HelixNet System w/Base Station", "dailyRate": 325, "weeklyRate": 975 },
+      { "name": "Clear-Com RM-702 2CH Remote Station", "dailyRate": 65, "weeklyRate": 195 },
+      { "name": "Clear-Com PS-702 2CH Power Supply", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "HME DX210 Digital Wireless 4-Pack", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "HME BP200 Beltpack", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "Clear-Com CC-110 Single-Ear Headset", "dailyRate": 25, "weeklyRate": 75 },
+      { "name": "Clear-Com CC-300 Dual-Ear Headset", "dailyRate": 35, "weeklyRate": 105 }
+    ],
+    "walkies": [
+      { "name": "Motorola CP200d Two-Way Radio", "dailyRate": 25, "weeklyRate": 75 },
+      { "name": "Motorola XPR7550e Digital Radio", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "Multi-Unit Radio Charger (6-Bay)", "dailyRate": 15, "weeklyRate": 45 },
+      { "name": "Surveillance Earpiece for Radio", "dailyRate": 8, "weeklyRate": 24 }
+    ],
+    "ifb": [
+      { "name": "Comtek BST-75 IFB Transmitter", "dailyRate": 95, "weeklyRate": 285 },
+      { "name": "Comtek PR-75a IFB Receiver", "dailyRate": 35, "weeklyRate": 105 },
+      { "name": "Lectrosonics IFBT4 IFB Transmitter", "dailyRate": 145, "weeklyRate": 435 },
+      { "name": "Lectrosonics R1a IFB Receiver", "dailyRate": 55, "weeklyRate": 165 }
+    ],
+    "cue_lights": [
+      { "name": "D'San Perfect Cue Mini Cue Light", "dailyRate": 45, "weeklyRate": 135 },
+      { "name": "D'San Limitimer Pro-2000 Confidence System", "dailyRate": 125, "weeklyRate": 375 },
+      { "name": "Littlite LW-12-LED Gooseneck Light", "dailyRate": 15, "weeklyRate": 45 }
+    ]
+  },
+  "labor": {
+    "management": [
+      { "name": "Project Manager (per day)", "dailyRate": 750, "weeklyRate": null },
+      { "name": "Technical Director (per day)", "dailyRate": 700, "weeklyRate": null },
+      { "name": "Show Caller/Stage Manager (per day)", "dailyRate": 650, "weeklyRate": null }
+    ],
+    "audio": [
+      { "name": "Audio Lead Technician A1 (per day)", "dailyRate": 600, "weeklyRate": null },
+      { "name": "Audio Technician A2 (per day)", "dailyRate": 500, "weeklyRate": null },
+      { "name": "Audio Technician A3 (per day)", "dailyRate": 450, "weeklyRate": null },
+      { "name": "Monitor Engineer (per day)", "dailyRate": 550, "weeklyRate": null },
+      { "name": "Broadcast Audio Mixer (per day)", "dailyRate": 650, "weeklyRate": null }
+    ],
+    "video": [
+      { "name": "Video Lead Technician V1 (per day)", "dailyRate": 600, "weeklyRate": null },
+      { "name": "Video Engineer (per day)", "dailyRate": 550, "weeklyRate": null },
+      { "name": "Camera Operator (per day)", "dailyRate": 500, "weeklyRate": null },
+      { "name": "Graphics Operator (per day)", "dailyRate": 550, "weeklyRate": null },
+      { "name": "Playback/Recording Tech (per day)", "dailyRate": 500, "weeklyRate": null },
+      { "name": "LED Wall Technician (per day)", "dailyRate": 550, "weeklyRate": null }
+    ],
+    "lighting": [
+      { "name": "Lighting Lead Technician L1 (per day)", "dailyRate": 600, "weeklyRate": null },
+      { "name": "Lighting Technician L2 (per day)", "dailyRate": 500, "weeklyRate": null },
+      { "name": "Lighting Programmer (per day)", "dailyRate": 650, "weeklyRate": null },
+      { "name": "Followspot Operator (per day)", "dailyRate": 400, "weeklyRate": null }
+    ],
+    "general": [
+      { "name": "Setup Technician (per day)", "dailyRate": 400, "weeklyRate": null },
+      { "name": "Strike Technician (per day)", "dailyRate": 400, "weeklyRate": null },
+      { "name": "General Technician (per day)", "dailyRate": 350, "weeklyRate": null },
+      { "name": "Stagehand (per day)", "dailyRate": 300, "weeklyRate": null }
+    ],
+    "specialty": [
+      { "name": "Rigger/Head Rigger (per day)", "dailyRate": 650, "weeklyRate": null },
+      { "name": "Electrician (per day)", "dailyRate": 550, "weeklyRate": null },
+      { "name": "Generator Operator (per day)", "dailyRate": 500, "weeklyRate": null },
+      { "name": "Truck Driver (per day)", "dailyRate": 450, "weeklyRate": null }
+    ]
+  },
+  "other": {
+    "trucking": [
+      { "name": "24' Box Truck (Local)", "dailyRate": 350, "weeklyRate": 1050 },
+      { "name": "26' Box Truck (Local)", "dailyRate": 450, "weeklyRate": 1350 },
+      { "name": "Inter/Intra State Trucking (per mile)", "dailyRate": 3, "weeklyRate": null },
+      { "name": "Delivery Charge (Local)", "dailyRate": 150, "weeklyRate": null }
+    ],
+    "travel": [
+      { "name": "Hotel and Lodging (per night)", "dailyRate": 175, "weeklyRate": null },
+      { "name": "Per Diem (per day)", "dailyRate": 75, "weeklyRate": null },
+      { "name": "Air Fare (estimated)", "dailyRate": 400, "weeklyRate": null },
+      { "name": "Ground Transportation", "dailyRate": 125, "weeklyRate": null }
+    ],
+    "rentals": [
+      { "name": "All-Terrain Scissor Lift Rental (per day)", "dailyRate": 275, "weeklyRate": 825 },
+      { "name": "12' Ladder", "dailyRate": 25, "weeklyRate": 75 },
+      { "name": "Control Tent 10'x10' Pop-Up w/Sides", "dailyRate": 95, "weeklyRate": 285 }
+    ],
+    "consumables": [
+      { "name": "Gaff Tape Black 3\" Roll", "dailyRate": 25, "weeklyRate": null },
+      { "name": "Gaff Tape White 2\" Roll", "dailyRate": 22, "weeklyRate": null },
+      { "name": "Console/Show Tape Package", "dailyRate": 75, "weeklyRate": null },
+      { "name": "Tie Line/Trick Line Roll", "dailyRate": 15, "weeklyRate": null },
+      { "name": "Plastic Rain Tarp (per unit)", "dailyRate": 18, "weeklyRate": null }
+    ]
+  }
+}

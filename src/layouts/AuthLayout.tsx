@@ -13,10 +13,10 @@ export function AuthLayout() {
           <Link to="/" className="flex items-center gap-2.5">
             <img
               src="/icons/logo/logo-icon-only.png"
-              alt="QuoteMyAV"
+              alt="QMAV"
               className="w-10 h-10 rounded-xl"
             />
-            <span className="text-xl font-bold">QuoteMyAV</span>
+            <span className="text-xl font-bold">QMAV</span>
           </Link>
           <div>
             <h2 className="text-3xl font-bold mb-4">AI-Powered AV Quotes</h2>
@@ -25,7 +25,7 @@ export function AuthLayout() {
             </p>
           </div>
           <p className="text-sm text-white/60">
-            &copy; 2025 QuoteMyAV
+            &copy; 2025 QMAV
           </p>
         </div>
       </div>
@@ -43,12 +43,12 @@ export function AuthLayout() {
           <Link to="/" className="flex justify-center items-center gap-2.5 group">
             <img
               src="/icons/logo/logo-icon-only.png"
-              alt="QuoteMyAV"
+              alt="QMAV"
               className="w-12 h-12 rounded-xl shadow-lg shadow-teal-500/20 group-hover:shadow-teal-500/40 transition-shadow"
             />
           </Link>
           <h2 className="mt-4 text-center text-2xl font-bold text-white">
-            QuoteMyAV
+            QMAV
           </h2>
           <p className="mt-2 text-center text-sm text-slate-400">
             AI-powered AV quotes in minutes

@@ -11,10 +11,10 @@ export function Landing() {
             <Link to="/" className="flex items-center gap-2.5 group">
               <img
                 src="/icons/logo/logo-icon-only.png"
-                alt="QuoteMyAV"
+                alt="QMAV"
                 className="w-10 h-10 rounded-xl shadow-lg group-hover:shadow-teal-500/30 transition-shadow"
               />
-              <span className="text-xl font-bold text-white">QuoteMyAV</span>
+              <span className="text-xl font-bold text-white">QMAV</span>
             </Link>
             <div className="flex items-center gap-4">
               <Link to="/login" className="text-slate-300 hover:text-white transition-colors">
@@ -86,7 +86,7 @@ export function Landing() {
               <div className="w-3 h-3 rounded-full bg-red-500"></div>
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
               <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <span className="ml-4 text-slate-500 text-sm">QuoteMyAV Dashboard</span>
+              <span className="ml-4 text-slate-500 text-sm">QMAV Dashboard</span>
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-slate-700/50 rounded-lg p-4">
@@ -260,6 +260,7 @@ export function Landing() {
               period: 'forever',
               quotes: '3 quotes/month',
               features: ['AI quote generation', 'PDF export', 'Basic editing'],
+              plan: 'free',
             },
             {
               name: 'Starter',
@@ -267,6 +268,7 @@ export function Landing() {
               period: '/month',
               quotes: '25 quotes/month',
               features: ['Everything in Free', 'AI edit assistant', 'Version history'],
+              plan: 'starter',
             },
             {
               name: 'Pro',
@@ -275,6 +277,7 @@ export function Landing() {
               quotes: 'Unlimited quotes',
               features: ['Everything in Starter', 'Priority support', 'Custom branding'],
               featured: true,
+              plan: 'pro',
             },
             {
               name: 'Enterprise',
@@ -282,6 +285,7 @@ export function Landing() {
               period: '',
               quotes: 'Multi-seat teams',
               features: ['Everything in Pro', 'Team collaboration', 'API access', 'Dedicated support'],
+              plan: 'enterprise',
             },
           ].map((tier) => (
             <div
@@ -328,7 +332,16 @@ export function Landing() {
                   </li>
                 ))}
               </ul>
-              <Link to="/signup" className="block mt-6">
+              <Link
+                to={
+                  tier.plan === 'free'
+                    ? '/signup'
+                    : tier.plan === 'enterprise'
+                    ? '/#contact'
+                    : `/checkout?plan=${tier.plan}`
+                }
+                className="block mt-6"
+              >
                 {tier.featured ? (
                   <button className="w-full px-4 py-2.5 bg-white text-teal-600 font-semibold rounded-lg hover:bg-slate-100 transition-colors">
                     Get Started
@@ -371,22 +384,22 @@ export function Landing() {
             <div className="flex items-center gap-2">
               <img
                 src="/icons/logo/logo-icon-only.png"
-                alt="QuoteMyAV"
+                alt="QMAV"
                 className="w-8 h-8 rounded-lg"
               />
-              <span className="text-lg font-bold text-white">QuoteMyAV</span>
+              <span className="text-lg font-bold text-white">QMAV</span>
             </div>
             <p className="text-sm text-slate-500">
-              &copy; 2025 QuoteMyAV. Built for AV professionals.
+              &copy; 2025 QMAV. Built for AV professionals.
             </p>
             <div className="flex gap-6">
-              <a href="#" className="text-slate-400 hover:text-white transition-colors text-sm">
+              <Link to="/privacy" className="text-slate-400 hover:text-white transition-colors text-sm">
                 Privacy
-              </a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors text-sm">
+              </Link>
+              <Link to="/terms" className="text-slate-400 hover:text-white transition-colors text-sm">
                 Terms
-              </a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors text-sm">
+              </Link>
+              <a href="mailto:support@quotemyav.com" className="text-slate-400 hover:text-white transition-colors text-sm">
                 Contact
               </a>
             </div>

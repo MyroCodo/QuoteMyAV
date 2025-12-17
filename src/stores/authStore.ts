@@ -13,6 +13,7 @@ interface AuthState {
   signIn: (email: string, password: string, rememberMe?: boolean) => Promise<{ success: boolean; error?: string }>;
   signUp: (email: string, password: string, fullName: string, company?: string) => Promise<{ success: boolean; error?: string }>;
   signOut: () => Promise<void>;
+  updateProfilePicture: (url: string) => Promise<void>;
   clearError: () => void;
 }
 
@@ -113,6 +114,26 @@ export const useAuthStore = create<AuthState>((set) => ({
       console.error('Sign out error:', err);
       set({ isLoading: false });
     }
+  },
+
+  updateProfilePicture: async (url: string) => {
+    set((state) => {
+      const updatedUser = state.user ? { ...state.user, profilePictureUrl: url } : null;
+
+      // Persist to localStorage/sessionStorage in demo mode
+      if (updatedUser) {
+        const sessionUser = sessionStorage.getItem('demo-user');
+        const localUser = localStorage.getItem('demo-user');
+
+        if (sessionUser) {
+          sessionStorage.setItem('demo-user', JSON.stringify(updatedUser));
+        } else if (localUser) {
+          localStorage.setItem('demo-user', JSON.stringify(updatedUser));
+        }
+      }
+
+      return { user: updatedUser };
+    });
   },
 
   clearError: () => set({ error: null }),

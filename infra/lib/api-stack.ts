@@ -57,7 +57,9 @@ export class ApiStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(30),
       vpc: props.vpc,
       vpcSubnets: {
-        subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+        subnetType: props.isProd
+          ? ec2.SubnetType.PRIVATE_WITH_EGRESS
+          : ec2.SubnetType.PRIVATE_ISOLATED,
       },
       securityGroups: [lambdaSecurityGroup],
       environment: {
@@ -92,7 +94,7 @@ export class ApiStack extends cdk.Stack {
     // API Gateway REST API
     this.api = new apigateway.RestApi(this, 'QuoteMyAVApi', {
       restApiName: `quotemyav-api-${envPrefix}`,
-      description: 'QuoteMyAV REST API',
+      description: `QuoteMyAV REST API - ${envPrefix}`,
       deployOptions: {
         stageName: 'v1',
         throttlingBurstLimit: props.isProd ? 500 : 100,
@@ -177,6 +179,13 @@ export class ApiStack extends cdk.Stack {
       value: stripeSecret.secretArn,
       description: 'Stripe API key secret ARN (set value in console)',
       exportName: `${this.stackName}-StripeSecretArn`,
+    });
+
+    // Export API Rest ID for cross-stack reference (used by Frontend stack)
+    new cdk.CfnOutput(this, 'ApiRestId', {
+      value: this.api.restApiId,
+      description: 'API Gateway REST API ID',
+      exportName: `${this.stackName}-ApiRestId`,
     });
   }
 }

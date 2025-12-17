@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { Avatar } from '../components/ui';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard' },
@@ -28,10 +29,10 @@ export function MainLayout() {
             <Link to="/" className="flex items-center gap-2.5 group">
               <img
                 src="/icons/logo/logo-icon-only.png"
-                alt="QuoteMyAV"
+                alt="QMAV"
                 className="w-9 h-9 rounded-xl shadow-lg shadow-teal-500/20 group-hover:shadow-teal-500/30 transition-shadow"
               />
-              <span className="text-xl font-semibold text-white">QuoteMyAV</span>
+              <span className="text-xl font-semibold text-white">QMAV</span>
             </Link>
 
             {/* Navigation */}
@@ -55,7 +56,21 @@ export function MainLayout() {
             <div className="flex items-center gap-3">
               {user ? (
                 <>
-                  <span className="text-sm text-slate-400 hidden sm:block">{user.email}</span>
+                  <div className="hidden sm:flex items-center gap-2">
+                    <Avatar
+                      src={user.profilePictureUrl}
+                      name={user.fullName}
+                      size="md"
+                    />
+                    <span className="text-sm text-slate-300">{user.fullName}</span>
+                  </div>
+                  <div className="sm:hidden">
+                    <Avatar
+                      src={user.profilePictureUrl}
+                      name={user.fullName}
+                      size="md"
+                    />
+                  </div>
                   <button
                     onClick={handleSignOut}
                     className="px-3 py-1.5 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200"

@@ -5,6 +5,7 @@ export interface User {
   fullName: string;
   company?: string;
   tier: 'free' | 'starter' | 'pro' | 'enterprise';
+  profilePictureUrl?: string;
   createdAt: string;
 }
 

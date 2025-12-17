@@ -6,5 +6,9 @@
     "us-east-1d",
     "us-east-1e",
     "us-east-1f"
-  ]
+  ],
+  "hosted-zone:account=332305705731:domainName=quotemyav.com:region=us-east-1": {
+    "Id": "/hostedzone/Z03491981BYZCGJ4GVCYF",
+    "Name": "quotemyav.com."
+  }
 }

@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuoteStore } from '../stores/quoteStore';
 import { useAuthStore } from '../stores/authStore';
 import { useSubscriptionStore } from '../stores/subscriptionStore';
@@ -24,6 +24,22 @@ export function Dashboard() {
   } = useSubscriptionStore();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false);
+
+  // Check for upgrade success message
+  useEffect(() => {
+    if (searchParams.get('upgraded') === 'true' || searchParams.get('success') === 'true') {
+      setShowUpgradeSuccess(true);
+      // Clear the query param
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('upgraded');
+      newParams.delete('success');
+      setSearchParams(newParams, { replace: true });
+      // Auto-dismiss after 5 seconds
+      setTimeout(() => setShowUpgradeSuccess(false), 5000);
+    }
+  }, [searchParams, setSearchParams]);
 
   // Fetch quotes when user is available
   useEffect(() => {
@@ -82,6 +98,35 @@ export function Dashboard() {
 
   return (
     <div>
+      {/* Upgrade Success Notification */}
+      {showUpgradeSuccess && (
+        <div className="mb-6 bg-teal-500/10 border border-teal-500/30 rounded-lg p-4 animate-fade-in">
+          <div className="flex items-start gap-3">
+            <svg className="w-6 h-6 text-teal-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="flex-1">
+              <h3 className="text-teal-400 font-semibold">Upgrade Successful!</h3>
+              <p className="text-teal-300/80 text-sm mt-1">
+                Your plan has been upgraded to {subscription ? PLAN_DETAILS[subscription.plan].name : 'Pro'}. You now have{' '}
+                {subscription && PLAN_DETAILS[subscription.plan].quotesPerMonth === 'unlimited'
+                  ? 'unlimited quotes'
+                  : `${subscription?.quotesLimit || 0} quotes per month`}
+                .
+              </p>
+            </div>
+            <button
+              onClick={() => setShowUpgradeSuccess(false)}
+              className="text-teal-400 hover:text-teal-300 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-2xl font-bold text-white">

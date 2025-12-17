@@ -57,7 +57,9 @@ export class DatabaseStack extends cdk.Stack {
       ),
       vpc: props.vpc,
       vpcSubnets: {
-        subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+        subnetType: props.isProd
+          ? ec2.SubnetType.PRIVATE_WITH_EGRESS
+          : ec2.SubnetType.PRIVATE_ISOLATED,
       },
       securityGroups: [this.securityGroup],
       databaseName: 'quotemyav',

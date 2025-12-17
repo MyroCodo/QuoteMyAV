@@ -1,10 +1,10 @@
-# QuoteMyAV
+# QMAV
 
 AI-powered quote generation for AV rental companies, event production houses, and integrators.
 
 ## Overview
 
-QuoteMyAV transforms event briefs into professional AV equipment quotes using AI. Fill out a guided form describing your event, and get a detailed quote with equipment recommendations, labor estimates, and pricing.
+QMAV transforms event briefs into professional AV equipment quotes using AI. Fill out a guided form describing your event, and get a detailed quote with equipment recommendations, labor estimates, and pricing.
 
 ## Features
 
@@ -53,8 +53,8 @@ See [docs/ROADMAP.md](docs/ROADMAP.md) for the complete feature roadmap includin
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/quotemyav.git
-cd quotemyav
+git clone https://github.com/yourusername/qmav.git
+cd qmav
 
 # Install dependencies
 npm install
