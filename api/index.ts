@@ -103,7 +103,7 @@ app.notFound((c) => {
 
 // Vercel Serverless config (Node.js runtime for pg support)
 export const config = {
-  runtime: 'nodejs20.x',
+  runtime: 'nodejs',
   maxDuration: 30,
 };
 
