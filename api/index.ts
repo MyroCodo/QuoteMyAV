@@ -101,9 +101,10 @@ app.notFound((c) => {
   );
 });
 
-// Vercel Edge Runtime config (used when deployed to Vercel)
+// Vercel Serverless config (Node.js runtime for pg support)
 export const config = {
-  runtime: 'edge',
+  runtime: 'nodejs20.x',
+  maxDuration: 30,
 };
 
 // Export for Vercel Edge
